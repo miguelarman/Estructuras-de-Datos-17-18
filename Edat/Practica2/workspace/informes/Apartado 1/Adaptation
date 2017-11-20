@@ -1,0 +1,14 @@
+POPULATION
+
+Population of the database was a difficult task because firstly we found out that in postgres the temporary tables do not work as it was explained in class
+so we had to create manually the tables and the once we had the data in the definitive format drop them. All the fields in the "temporarry" that we created were
+of the datatype varchar. Thanks to that we could use the command copy and store all the information given, we had some trouble because the encoding of the files
+was too old and we had to change it. 
+Once we had the data stored in the temporary tables we had to do the cast to convert every field to it suitable datatype, to do this we used a lot the command cast
+that turns strings into integer, numeric, date... etc. We had some trouble converting certaing string into numeric because the decimal coma in psql is a dot and 
+in the files given they used coma and dot arbitrarily, to do this we changed the string and replaced every coma with a dot and then we could do the cast.
+Also there was trouble because the files given were so badly designed and filled that there were fields without any information or even with the information of other
+column, so we discarded all the entries that did not have all the fields filled up with the right information. Other trouble we found was that in the table isbn-prices
+there were a lot of isbn of a lot of books but most of them did not have any prize, so we filled the field prize with 0.0. After doing all these changes wich code in sql
+is provided in the file 'populate.txt' we got the definitive tables with significantly few data because most of the data provided on the original files was totally
+corrupted and we had to make a great clean up.

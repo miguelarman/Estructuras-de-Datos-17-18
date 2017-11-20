@@ -1,0 +1,60 @@
+Part III. Wake up and smell the C!
+In this part we shall use the C programming language to create a series of
+programs that shall execute certain operations on the bookstore database. In
+class, we shall see the basics of ODBC and work out a couple of examples of
+interaction with data bases. You are, of course, required to do some of the legwork
+and get documented on your own. The "manuals" sections of the web site
+http://www.unixodbc.org contains useful documentation. Especially useful:
+o “Programming Manual tutorial”, a good start to get your first program going
+and working out the basics;
+• “ODBC from C Tutorial Part 1”, has good explanations of teh basic
+functions: useful complement to the tutorial.
+You shall create the following programs (note: all programs work from the
+command line; I don't want to see interactive stuff, menus or anything like that:
+when you receive a specification it is important that your programs should work
+exactly as requested): 
+sale
+Thi program allows you to put books on sale. In order to create a sale one shall
+execute:
+sale <discount> <from> <to> <isbn> <isbn> .... <isbn>
+where "discount" is an integer between 0 (no discount) and 100 (you get the book
+for free). The isbn list has arbitrary length, and it represents the books that we put
+on sale (always check your limit case: does your program crash if I give a list of
+zero isbns?).
+buy
+This program performs two functions, depending on the value of the first
+parameter: I can add a sale for a registered user (receiving in return an invoice
+number for that sale), or I can delete all the sales associated to a given invoice
+number. You shall execute:
+buy add <screen_name> <isbn> <isbn> .... <isbn>
+buy del <invoice_id>
+If the parameter add is specified, the program will print on the screen and return as
+a return value the number of the new invoice relative to the sale (again, careful with
+the limit cases: what do you do if I specify zero books? Will you create an empty
+invoice or do nothing? Justify your decision.). The program will also print on the
+screen the total price to be paid.
+Example:
+$ buy add jack 213456 8976752 2175643
+invoice: 1786
+total: 56 E
+$ _
+fill_sales
+This program fills the "sales" table with data from an input file with the same format
+as "ventas.txt".
+fill_sales <input_file>
+Compare the data that you insert in the "sales" table using the method in part 2 with those
+that you get by filling the same table with the same text file using "fill_sale". Do you get
+the same result? Yes? No? Why?
+What to do
+• Implement the program described above using C and ODBC;
+• You don't have to check the input data: assume that, as format goes, they are
+correct (of course you have to check things like the existence of users and so
+on).
+• Do error checking on all the ODBC calls: this is not only a requirement but also
+something that will save you a lot of trouble.
+• For the connection to the "book" data base you shall use the same username
+and password that you have used to log in in the first assignment.
+• Check your code with valgrind.
+What to turn in
+• Source code and Makefile (one makefile must generate all programs).
+• A report discussing your work

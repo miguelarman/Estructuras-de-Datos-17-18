@@ -1,0 +1,248 @@
+Part II. Queries
+What to do
+Implement using SQL and PosgresSQL the queries proposed in the first
+assignment. You can do it using pgadmin, quite useful for debugging your queries.
+What to turn in
+• A file "sql_queries.txt" with the SQL text of the queries.
+• A series of files “result_1.txt”, “result_2.txt”, etc. containing the results of
+the executions of each of the queries.
+
+
+1. Given a title, how many editions does it have? In how many languages?
+a)
+CREATE VIEW Book_ID_Title AS'
+SELECT BookID
+FROM Edition
+WHERE title = 'BookNameHere' ';
+SELECT COUNT(*)
+FROM Edition
+WHERE BookID IN Book_ID_Title;
+b)
+SELECT COUNT(DISTINCT(language))
+FROM Edition
+WHERE BookID IN Book_ID_Title;
+
+
+Modified:
+a) 
+SELECT COUNT(*)
+FROM edition
+WHERE isbn IN (SELECT isbn FROM edition WHERE title = 'Don Quixote');
+
+b)
+SELECT COUNT(DISTINCT(language_)
+FROM edition
+WHERE isbn IN (SELECT isbn FROM edition WHERE title = 'Don Quixote');
+
+
+
+returns:
+
+a)
+        count bigint
+        4
+b)
+
+        count bigint
+        2
+
+
+
+
+
+
+2. How many books of author X were sold?
+SELECT COUNT(*)
+FROM Edition NATURAL JOIN Global_Book NATURAL JOIN Purchases
+NATURAL JOIN Author
+WHERE Author.Name = 'AuthorNameHere';
+
+Mpdified:
+SELECT COUNT(*)
+FROM edition
+WHERE author = 'Arturo Perez-Reverte';
+
+        count bigint
+        44
+
+
+
+
+3. How many books of author X were sold at a discount?
+SELECT COUNT(*)
+FROM Edition NATURAL JOIN Global_Book NATURAL JOIN Purchases
+NATURAL JOIN Author
+WHERE Author.Name = 'AuthorNameHere' AND SaleID <> 'NULL';
+
+Modified:
+SELECT COUNT(*)
+FROM edition NATURAL JOIN purchase
+WHERE author = 'Arturo Perez-Reverte' AND saleID IS NOT NULL;
+
+        count bigint
+        43
+
+
+
+
+
+4. How much money was earned by selling books of author X?
+SELECT SUM (Amount)
+FROM Edition NATURAL JOIN Global_Book NATURAL JOIN Purchases
+NATURAL JOIN Author
+WHERE Author.Name = 'AuthorNameHere';
+
+Modified:
+SELECT SUM(amount)
+FROM edition NATURAL JOIN purchase
+WHERE author = 'Arturo Perez-Reverte';
+
+
+
+        sum numeric
+        6856.00
+
+
+5. How many books were sold to registered users?
+SELECT COUNT(*)
+FROM Edition NATURAL JOIN Purchases
+WHERE UserID <> 'NULL';
+
+Modified:
+SELECT COUNT(*)
+FROM edition NATURAL JOIN purchase
+WHERE UserID IS NOT NULL;
+
+
+
+        count bigint
+        18672
+
+
+
+
+6. How many registered users have bought English books?
+SELECT COUNT(DISTINCT(UserID))
+FROM Edition NATURAL JOIN Purchases
+WHERE UserID<>'NULL' AND Language = 'English';
+
+Modified:
+SELECT COUNT(DISTINCT(userID))
+FROM edition NATURAL JOIN purchase
+WHERE userID IS NOT NULL AND language_ = 'Inglés';
+
+
+        count bigint
+        97
+
+
+
+
+
+7. How much money was earned by selling books in French?
+SELECT SUM (Amount)
+FROM Edition NATURAL JOIN Purchases
+WHERE Language = 'French';
+
+Modified:
+SELECT SUM(amount)
+FROM edition NATURAL JOIN purchase
+WHERE language_ = 'Francés';
+
+
+        sum numeric
+        9170.00
+
+
+
+8. In which days were books of the publisher Adelphi on sale?
+SELECT Sales.Start_date, Sales.End_Date
+FROM Edition NATURAL JOIN Sale_Book NATURAL JOIN Sales
+WHERE Edition.Publisher = 'Adelphi';
+
+Modified:
+SELECT sale.start_date, sale.end_date
+FROM edition NATURAL JOIN sale_isbn NATURAL JOIN sale
+WHERE edition.publisher = 'Adelphi';
+
+
+    start_date date     end_date date
+1   2017-01-05          2017-01-27
+2   2017-01-01          2017-01-31
+   
+
+
+
+
+
+
+/*ESTO TENGO QUE QUITARLO*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+
+ADDED TO TEST QUERIES:
+
+INSERT INTO edition VALUES ('14774014R99', 'Don Quixote', 'Libro de bolsillo', 'CreateSpace Independent Publishing Platform', 19.99, 'Español', 0,
+599, 'Miguel de Cervantes', '1998-06-26');
+
+INSERT INTO sale (saleid, start_date, end_date, discount) VALUES (666, '2017-01-01', '2017-01-31', 20);
+INSERT INTO sale_isbn (saleid, isbn) VALUES (666, '1941999174');
+UPDATE purchase SET saleid = 666 WHERE isbn = '1941999174';
+                1941999174 | Hombres Buenos
+UPDATE purchase SET userid = 12 WHERE purchaseid = 100;
+
+INSERT INTO edition VALUES ('22222222222', 'Libro de Adelphi', 'Libro de bolsillo', 'Adelphi', 9.99, 'Español', 0, 97, 'Adelphus', '2001-06-26');
+INSERT INTO sale (saleid, start_date, end_date, discount) VALUES (999, '2017-01-05', '2017-01-27', 35);
+INSERT INTO sale (saleid, start_date, end_date, discount) VALUES (666, '2017-01-01', '2017-01-31', 20);
+INSERT INTO sale_isbn (saleid, isbn) VALUES (999, '22222222222'), (666, '22222222222');
+
+
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------------------*/
+
+
+
+
+INFORME:
+
+In order to write this queries, we had to adapt the previous version, because the structure os the database was differente. For example, in order
+to link a book with an author, we no longer have to do "Edition NATURAL JOIN Global_Book NATURAL JOIN Author", because the new database stores the
+author's name in each edition. Other example is that we had to change the language in wich we search for the languages, as a book in English is stored
+with a language of 'Inglés', because the data in file "LIBROS_FINAL.txt" is written in Spanish
+
+To test our queries, we had to add some data manually to the database, because not all data needed for them was provided. in order to do that we did
+the following:
+
+- Before query 1 we executed:
+"INSERT INTO edition VALUES ('14774014R99', 'Don Quixote', 'Libro de bolsillo', 'CreateSpace Independent Publishing Platform', 19.99, 'Español', 0,
+599, 'Miguel de Cervantes', '1998-06-26');"
+
+This added a different book name 'Don Quixote' in a language in which it has not been added to the database, in order to check that it detects different
+languages
+
+- Before query 3 we executed:
+"INSERT INTO sale (saleid, start_date, end_date, discount) VALUES (666, '2017-01-01', '2017-01-31', 20);
+INSERT INTO sale_isbn (saleid, isbn) VALUES (666, '1941999174');
+UPDATE purchase SET saleid = 666 WHERE isbn = '1941999174';"
+
+Being '1941999174' an isbn we manually found to be from a book written by 'Arturo Perez-Reverte'. this adds a book written by this author bought with a sale
+
+- Before query 5 we executed:
+"UPDATE purchase SET userid = 12 WHERE purchaseid = 100;"
+
+This sets some purchases as made by user 'Jack', with userid 100
+
+- Before query 8 we executed:
+"INSERT INTO edition VALUES ('22222222222', 'Libro de Adelphi', 'Libro de bolsillo', 'Adelphi', 9.99, 'Español', 0, 97, 'Adelphus', '2001-06-26');
+INSERT INTO sale (saleid, start_date, end_date, discount) VALUES (999, '2017-01-05', '2017-01-27', 35);
+INSERT INTO sale (saleid, start_date, end_date, discount) VALUES (666, '2017-01-01', '2017-01-31', 20);
+INSERT INTO sale_isbn (saleid, isbn) VALUES (999, '22222222222'), (666, '22222222222');"
+
+This creates a book published by Adelphi, and adds it to two different sales

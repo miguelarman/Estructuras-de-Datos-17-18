@@ -1,0 +1,3 @@
+﻿SELECT COUNT(*)
+FROM edition NATURAL JOIN purchase
+WHERE UserID IS NOT NULL;
