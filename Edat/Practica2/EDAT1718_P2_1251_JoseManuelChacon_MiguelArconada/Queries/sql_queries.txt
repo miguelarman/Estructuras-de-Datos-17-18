@@ -1,0 +1,130 @@
+1. Given a title, how many editions does it have? In how many languages?
+- Previous version:
+a)
+CREATE VIEW Book_ID_Title AS'
+SELECT BookID
+FROM Edition
+WHERE title = 'BookNameHere' ';
+SELECT COUNT(*)
+FROM Edition
+WHERE BookID IN Book_ID_Title;
+b)
+SELECT COUNT(DISTINCT(language))
+FROM Edition
+WHERE BookID IN Book_ID_Title;
+
+
+- Modified:
+a) 
+SELECT COUNT(*)
+FROM edition
+WHERE isbn IN (SELECT isbn FROM edition WHERE title = 'Don Quixote');
+
+b)
+SELECT COUNT(DISTINCT(language_)
+FROM edition
+WHERE isbn IN (SELECT isbn FROM edition WHERE title = 'Don Quixote');
+
+
+2. How many books of author X were sold?
+- Previous version:
+
+SELECT COUNT(*)
+FROM Edition NATURAL JOIN Global_Book NATURAL JOIN Purchases
+NATURAL JOIN Author
+WHERE Author.Name = 'AuthorNameHere';
+
+- Mpdified:
+
+SELECT COUNT(*)
+FROM edition
+WHERE author = 'Arturo Perez-Reverte';
+
+
+3. How many books of author X were sold at a discount?
+- Previous version:
+
+SELECT COUNT(*)
+FROM Edition NATURAL JOIN Global_Book NATURAL JOIN Purchases
+NATURAL JOIN Author
+WHERE Author.Name = 'AuthorNameHere' AND SaleID <> 'NULL';
+
+- Modified:
+
+SELECT COUNT(*)
+FROM edition NATURAL JOIN purchase
+WHERE author = 'Arturo Perez-Reverte' AND saleID IS NOT NULL;
+
+
+4. How much money was earned by selling books of author X?
+- Previous version:
+
+SELECT SUM (Amount)
+FROM Edition NATURAL JOIN Global_Book NATURAL JOIN Purchases
+NATURAL JOIN Author
+WHERE Author.Name = 'AuthorNameHere';
+
+- Modified:
+
+SELECT SUM(amount)
+FROM edition NATURAL JOIN purchase
+WHERE author = 'Arturo Perez-Reverte';
+
+
+
+5. How many books were sold to registered users?
+- Previous version:
+
+SELECT COUNT(*)
+FROM Edition NATURAL JOIN Purchases
+WHERE UserID <> 'NULL';
+
+- Modified:
+
+SELECT COUNT(*)
+FROM edition NATURAL JOIN purchase
+WHERE UserID IS NOT NULL;
+
+
+
+6. How many registered users have bought English books?
+- Previous version:
+
+SELECT COUNT(DISTINCT(UserID))
+FROM Edition NATURAL JOIN Purchases
+WHERE UserID<>'NULL' AND Language = 'English';
+
+- Modified:
+
+SELECT COUNT(DISTINCT(userID))
+FROM edition NATURAL JOIN purchase
+WHERE userID IS NOT NULL AND language_ = 'Inglés';
+
+
+
+7. How much money was earned by selling books in French?
+- Previous version:
+
+SELECT SUM (Amount)
+FROM Edition NATURAL JOIN Purchases
+WHERE Language = 'French';
+
+- Modified:
+
+SELECT SUM(amount)
+FROM edition NATURAL JOIN purchase
+WHERE language_ = 'Francés';
+
+
+8. In which days were books of the publisher Adelphi on sale?
+- Previous version:
+
+SELECT Sales.Start_date, Sales.End_Date
+FROM Edition NATURAL JOIN Sale_Book NATURAL JOIN Sales
+WHERE Edition.Publisher = 'Adelphi';
+
+- Modified:
+
+SELECT sale.start_date, sale.end_date
+FROM edition NATURAL JOIN sale_isbn NATURAL JOIN sale
+WHERE edition.publisher = 'Adelphi';

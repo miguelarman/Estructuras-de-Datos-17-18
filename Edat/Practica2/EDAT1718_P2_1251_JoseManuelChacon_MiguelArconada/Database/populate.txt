@@ -1,0 +1,146 @@
+This code generates all the temporary tables
+
+CREATE TABLE LIBROS_FINAL (
+	Autor VARCHAR(1024),
+	Titulo VARCHAR(1024),
+	Formato VARCHAR(1024),
+	Numero_de_paginas VARCHAR(1024),
+	Editorial VARCHAR(1024),
+	Fecha_de_publicacion VARCHAR(1024),
+	Idioma VARCHAR(1024),
+	ISBN VARCHAR(1024)
+);
+
+CREATE TABLE ISBNS_PRECIOS (
+	ISBN VARCHAR(1024),
+	Precio VARCHAR(1024)
+);
+
+CREATE TABLE Usuarios (
+	uid VARCHAR(1024),
+	scrname VARCHAR(1024),
+	full_name VARCHAR(1024),
+	join_date VARCHAR(1024),
+	ccard VARCHAR(1024),
+	expiration VARCHAR(1024)
+);
+
+CREATE TABLE ventas (
+	ventaid VARCHAR(1024),
+	uid VARCHAR(1024),
+	ISBN VARCHAR(1024),
+	date VARCHAR(1024)
+);
+
+
+
+This is the code usde to copy fromm the files
+
+
+COPY libros_final (autor, titulo, formato, numero_de_paginas, editorial, fecha_de_publicacion, idioma, isbn) FROM stdin;
+
+COPY isbns_precios (isbn, precio) FROM stdin;
+
+COPY usuarios (uid, scrname, full_name, join_date, ccard, expiration) FROM stdin;
+
+COPY ventas (ventaid, uid, isbn, date) FROM stdin;
+
+
+
+This code that creates the definitive tables
+
+
+CREATE TABLE edition (
+    isbn character varying(256) NOT NULL,
+    title character varying(256) NOT NULL,
+    pocket_edition character varying(256) NOT NULL,
+    publisher character varying(256) NOT NULL,
+    prize numeric(10,2),
+    language_ character varying(256) NOT NULL,
+    sold_items integer,
+    page_number integer,
+    author character varying(256),
+    published_date date,
+    CONSTRAINT edition_sold_items_check CHECK ((sold_items >= 0))
+);
+
+
+CREATE TABLE purchase (
+    purchaseid integer NOT NULL,
+    isbn character varying(256) NOT NULL,
+    amount numeric(10,2),
+    cash boolean,
+    saleid integer,
+    userid integer,
+    "time" date,
+    "order" integer NOT NULL,
+    CONSTRAINT purchase_amount_check CHECK ((amount >= (0)::numeric))
+);
+
+CREATE TABLE users (
+    userid integer NOT NULL,
+    scrname character varying(256) NOT NULL,
+    full_name character varying(256) NOT NULL,
+    join_date timestamp without time zone,
+    expiration date,
+    credit_card bigint,
+    total_spent numeric(10,2)
+);
+
+CREATE TABLE sale_isbn (
+    saleid integer,
+    isbn character varying(256)
+);
+
+
+CREATE TABLE sale (
+    saleid integer NOT NULL,
+    start_date date NOT NULL,
+    end_date date NOT NULL,
+    discount integer,
+    CONSTRAINT sale_check CHECK ((end_date >= start_date)),
+    CONSTRAINT sale_discount_check CHECK ((discount <= 100)),
+    CONSTRAINT sale_discount_check1 CHECK ((discount >= 0))
+);
+
+
+
+This is the code to insert all the data in the definitive tables with the right data type.
+
+We need this query to insert the prizes in the table edition because if the field is empty it gives an error.
+UPDATE isbns_precios
+SET precio = '0'       
+WHERE precio = '';
+
+INSERT INTO edition (isbn, title, pocket_edition, publisher, prize, language_, page_number, author, published_date, sold_items)
+SELECT libros_final.isbn, MIN(libros_final.titulo), MIN(libros_final.formato), MIN(libros_final.editorial), MIN(CAST(REPLACE(isbns_precios.precio, ',', '.') AS DECIMAL(10,2))), MIN(libros_final.idioma), MIN(CAST(REPLACE(libros_final.numero_de_paginas, ' pages', '') AS INT)), MIN(libros_final.autor), MIN(to_date(libros_final.fecha_de_publicacion, 'YYYY-MM-DD')), 0
+FROM libros_final NATURAL JOIN isbns_precios
+WHERE libros_final.isbn <> 'ISBN' AND libros_final.numero_de_paginas LIKE '% pages' AND libros_final.fecha_de_publicacion <> '0000-00-00'
+GROUP BY libros_final.isbn;
+
+INSERT INTO edition (isbn, title, pocket_edition, publisher, prize, language_, page_number, author, published_date, sold_items)
+SELECT libros_final.isbn, MIN(libros_final.titulo), MIN(libros_final.formato), MIN(libros_final.editorial), MIN(CAST(REPLACE(isbns_precios.precio, ',', '.') AS DECIMAL(10,2))), MIN(libros_final.idioma), MIN(CAST(REPLACE(libros_final.numero_de_paginas, ' pages', '') AS INT)), MIN(libros_final.autor), '2017-10-31', 0
+FROM libros_final NATURAL JOIN isbns_precios
+WHERE libros_final.isbn <> 'ISBN' AND libros_final.numero_de_paginas LIKE '% pages' AND libros_final.fecha_de_publicacion = '0000-00-00'
+GROUP BY libros_final.isbn;
+
+
+INSERT INTO purchase (purchaseid, isbn, amount, saleid, userid, "time")
+SELECT CAST(ventas.ventaid AS INT), ventas.isbn, edition.prize, NULL, CAST(ventas.uid AS INT), to_date(ventas.date, 'YYYY-MM-DD')
+FROM edition NATURAL JOIN ventas;
+
+
+INSERT INTO users (userid, scrname, full_name, join_date, expiration, credit_card, total_spent)
+SELECT CAST(uid AS INT), scrname, full_name, CAST(join_date AS TIMESTAMP),to_date(expiration, 'YYYY-MM-DD'), CAST(ccard AS BIGINT), 0
+FROM usuarios
+WHERE uid <> 'uid';
+
+And finally this is the code to drop all the temporary tables
+
+DROP TABLE LIBROS_FINAL;
+
+DROP TABLE ISBNS_PRECIOS;
+
+DROP TABLE Usuarios;
+
+DROP TABLE ventas;
