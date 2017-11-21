@@ -3,8 +3,7 @@
 #include <string.h>
 #include "type.h"
 
-size_t
-value_length(type_t type, void* value) {
+size_t value_length(type_t type, void* value) {
     switch(type) {
         case INT:
             return sizeof(int);
@@ -15,8 +14,7 @@ value_length(type_t type, void* value) {
     }
 }
 
-void
-print_value(FILE* f, type_t type, void* value) {
+void print_value(FILE* f, type_t type, void* value) {
     switch(type) {
         case INT:
             fprintf(f, "%d", *((int*) value));
@@ -28,8 +26,7 @@ print_value(FILE* f, type_t type, void* value) {
 }
 
 
-int
-value_cmp(type_t type, void* value1, void* value2) {
+int value_cmp(type_t type, void* value1, void* value2) {
     switch(type) {
         case INT:
             return *((int*) value1) - *((int*) value2); 

@@ -6,6 +6,12 @@
 
 struct table_ {
   /* To be implemented */
+  
+  
+  /*FILE *PF
+    INT N_COLS
+    INT *TYPES
+    LONG NEXT_RECORD*/
 };
 
 /* 
