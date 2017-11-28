@@ -4,14 +4,14 @@
 #include "table.h"
 #include "type.h"
 
+/*USAR -std=c99*/
+
 struct table_ {
-  /* To be implemented */
-  
-  
-  /*FILE *PF
-    INT N_COLS
-    INT *TYPES
-    LONG NEXT_RECORD*/
+  FILE *fp;
+  int ncols;
+  type_t *types;
+  long first;
+  void **values;
 };
 
 /* 
@@ -31,6 +31,9 @@ void table_create(char* path, int ncols, type_t* types) {
 */
 table_t* table_open(char* path) {
   /* To be implemented */
+  
+  t->values=(void **)malloc(t->ncols * sizeof(void*));
+  t->values[0]=malloc(1);
   return NULL;
 }
 
@@ -97,7 +100,24 @@ long table_last_pos(table_t* table) {
    if the position requested is past the end of the file.
 */
 long table_read_record(table_t* table, long pos) {
-  /* To be implemented */
+
+  free(table->values[0]);
+  
+  fseek(table->fp, pos, SEEK_SET);
+  int len;
+  fread(&len,sizeof(int), 1, table->fp);
+  
+  char *buf = (char *)malloc(len*sizeof(char));
+  
+  fread(buf, sizeof(char), len, table->fp);
+  
+  for (int i=0; i<table->ncols;i++) {
+      table->values[i] = buf;
+      
+      buf +=value_length(table->types[i], table->values[i]);
+  }
+  
+  
   return -1L;
 }
 
