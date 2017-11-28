@@ -20,8 +20,25 @@ struct table_ {
    the header information, and closes it.
 */
 void table_create(char* path, int ncols, type_t* types) {
-  /* To be implemented */
-  return;
+    
+    if (ncols < 1 || path == NULL || types == NULL) {
+        return;
+    }
+
+    FILE *fp = NULL;
+    int *values = NULL;
+    
+    fp = fopen(path, "w");
+    if (fp == NULL) {
+        return;
+    }
+    
+    fwrite(&ncols, sizeof(int), 1, fp);
+    fwrite(types, sizeof(int), ncols, fp);
+    
+    fclose(fp);
+    
+    return;
 }
 
 /* 
@@ -30,11 +47,50 @@ void table_create(char* path, int ncols, type_t* types) {
    NULL is the file doesn't exist or if there is any error.
 */
 table_t* table_open(char* path) {
-  /* To be implemented */
+    
+    FILE *fp = NULL;
+    table_t *table = NULL;
+    int ncols;
+    char *buf = NULL;
+    
+    if (path == NULL) {
+        return NULL;
+    }
+    
+    fp = fopen(path, "r+");
+    if (fp == NULL)  {
+        return NULL;
+    }
+    
+    table = (table_t *)malloc(sizeof(table_t));
+    if (table == NULL) {
+        fclose (fp);
+        return NULL;
+    }
+    
+    table->fp = fp;
+    
+    fread(&ncols, sizeof(int), 1, fp);   
+    
+    table->ncols = ncols;
+    
+    table->types = (type_t *)malloc(ncols * sizeof(type_t));
+    
+    fread(table->types, sizeof(int), ncols, fp);
+    
+    t->values=(void **)malloc(t->ncols * sizeof(void*));
+    if (t->values == NULL) {
+        fclose(fp);
+        free(table->types);
+        free(table);
+        return NULL;
+    }
+    
+    t->values[0]=malloc(1);
+    
+    table->first = ftell(fp);
   
-  t->values=(void **)malloc(t->ncols * sizeof(void*));
-  t->values[0]=malloc(1);
-  return NULL;
+    return table;
 }
 
 /* 
@@ -42,16 +98,44 @@ table_t* table_open(char* path) {
    in which the table is stored.
 */
 void table_close(table_t* table) {
-  /* To be implemented */
-  return;
+    
+    if (table == NULL) {
+        return;
+    }
+    
+    if (table->fp != NULL) {
+        fclose(table->fp);
+    }
+    
+    if (table->types != NULL) {
+        free(table->types);
+    }
+    
+    if (table->values[0] != NULL) {
+        free(table->values[0]);
+    }
+    
+    if (table->values != NULL) {
+        free(table->values);
+    }
+    
+    
+    if (table != NULL) {
+        free(table);
+    }
+    
+    return;
 }
 
 /* 
    Returns the number of columns of the table 
 */
 int table_ncols(table_t* table) {
-  /* To be implemented */
-  return 0;
+    if (table == NULL) {
+        return -1;
+    }
+    
+    return (table->ncols);
 }
 
 /* 
@@ -63,16 +147,22 @@ int table_ncols(table_t* table) {
    this function returns.
  */
 type_t* table_types(table_t* table) {
-  /* To be implemented */
-  return NULL;
+    if (table == NULL) {
+        return NULL;
+    }
+    
+    return (table->types);
 }
 
 /* 
    Returns the position in the file of the first record of the table 
 */
 long table_first_pos(table_t* table) {
-  /* To be implemented */
-  return 0L;
+    if (table == NULL) {
+        return NULL;
+    }
+    
+    return (table->first);
 }
 
 /* 
@@ -80,8 +170,11 @@ long table_first_pos(table_t* table) {
    positioned. 
 */
 long table_cur_pos(table_t* table) {
-  /* To be implemented */
-  return 0L;
+    if (table == NULL) {
+        return NULL;
+    }
+    
+    return (ftell(table->fp));
 }
 
 /* 
@@ -89,8 +182,19 @@ long table_cur_pos(table_t* table) {
    new record should be inserted.
 */
 long table_last_pos(table_t* table) {
-  /* To be implemented */
-  return 0L;
+    
+    FILE *fpaux = NULL;
+    
+    if (table == NULL) {
+        return NULL;
+    }
+    
+    fpaux = table->pf;
+    
+    fseek(fpaux, 0, SEEK_END);
+    
+    
+    return (ftell(fpaux));
 }
 
 /* 
@@ -100,25 +204,34 @@ long table_last_pos(table_t* table) {
    if the position requested is past the end of the file.
 */
 long table_read_record(table_t* table, long pos) {
+    
+    int len;
 
-  free(table->values[0]);
-  
-  fseek(table->fp, pos, SEEK_SET);
-  int len;
-  fread(&len,sizeof(int), 1, table->fp);
-  
-  char *buf = (char *)malloc(len*sizeof(char));
-  
-  fread(buf, sizeof(char), len, table->fp);
-  
-  for (int i=0; i<table->ncols;i++) {
-      table->values[i] = buf;
-      
-      buf +=value_length(table->types[i], table->values[i]);
-  }
-  
-  
-  return -1L;
+    /*fseek(table->fp, OL, SEEK_END);
+    if (ftell(table->fp) <= pos) {
+        return -1;
+    }*/
+    
+    if (table_last_pos(table) <= pos) {
+        return -1;
+    }
+    
+    free(table->values[0]);
+    
+    fseek(table->fp, pos, SEEK_SET);
+
+    fread(&len,sizeof(int), 1, table->fp);
+    
+    char *buf = (char *)malloc(len*sizeof(char));
+    
+    fread(buf, sizeof(char), len, table->fp);
+    
+    for (int i=0; i<table->ncols;i++) {
+        table->values[i] = buf;
+        buf +=value_length(table->types[i], table->values[i]);
+    }
+    
+    return ftell(table->fp);
 }
 
 /*
