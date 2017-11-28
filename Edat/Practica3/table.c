@@ -26,8 +26,7 @@ void table_create(char* path, int ncols, type_t* types) {
     }
 
     FILE *fp = NULL;
-    int *values = NULL;
-    
+
     fp = fopen(path, "w");
     if (fp == NULL) {
         return;
@@ -51,8 +50,7 @@ table_t* table_open(char* path) {
     FILE *fp = NULL;
     table_t *table = NULL;
     int ncols;
-    char *buf = NULL;
-    
+
     if (path == NULL) {
         return NULL;
     }
@@ -78,15 +76,15 @@ table_t* table_open(char* path) {
     
     fread(table->types, sizeof(int), ncols, fp);
     
-    t->values=(void **)malloc(t->ncols * sizeof(void*));
-    if (t->values == NULL) {
+    table->values=(void **)malloc(table->ncols * sizeof(void*));
+    if (table->values == NULL) {
         fclose(fp);
         free(table->types);
         free(table);
         return NULL;
     }
     
-    t->values[0]=malloc(1);
+    table->values[0]=malloc(1);
     
     table->first = ftell(fp);
   
@@ -159,7 +157,7 @@ type_t* table_types(table_t* table) {
 */
 long table_first_pos(table_t* table) {
     if (table == NULL) {
-        return NULL;
+        return -1;
     }
     
     return (table->first);
@@ -171,7 +169,7 @@ long table_first_pos(table_t* table) {
 */
 long table_cur_pos(table_t* table) {
     if (table == NULL) {
-        return NULL;
+        return -1;
     }
     
     return (ftell(table->fp));
@@ -183,18 +181,13 @@ long table_cur_pos(table_t* table) {
 */
 long table_last_pos(table_t* table) {
     
-    FILE *fpaux = NULL;
-    
     if (table == NULL) {
-        return NULL;
+        return -1;
     }
     
-    fpaux = table->pf;
+    fseek(table->fp, 0L, SEEK_END);
     
-    fseek(fpaux, 0, SEEK_END);
-    
-    
-    return (ftell(fpaux));
+    return (ftell(table->fp));
 }
 
 /* 
