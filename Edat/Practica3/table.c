@@ -21,11 +21,11 @@ struct table_ {
 */
 void table_create(char* path, int ncols, type_t* types) {
     
+    FILE *fp = NULL;
+    
     if (ncols < 1 || path == NULL || types == NULL) {
         return;
     }
-
-    FILE *fp = NULL;
 
     fp = fopen(path, "w");
     if (fp == NULL) {
@@ -205,7 +205,7 @@ long table_read_record(table_t* table, long pos) {
         return -1;
     }*/
     
-    if (table_last_pos(table) <= pos) {
+    if (table_last_pos(table) <= pos || table == NULL) {
         return -1;
     }
     
@@ -219,9 +219,9 @@ long table_read_record(table_t* table, long pos) {
     
     fread(buf, sizeof(char), len, table->fp);
     
-    for (int i=0; i<table->ncols;i++) {
+    for (int i=0; i < table->ncols; i++) {
         table->values[i] = buf;
-        buf +=value_length(table->types[i], table->values[i]);
+        buf += value_length(table->types[i], table->values[i]);
     }
     
     return ftell(table->fp);
@@ -235,8 +235,12 @@ long table_read_record(table_t* table, long pos) {
   column doesn't exist.
 */
 void *table_column_get(table_t* table, int col) {
-  /* To be implemented */
-  return NULL;
+    
+    if (table == NULL || col >= table->ncols) {
+        return NULL;
+    }
+    
+    return ((void *) table->values[col]);
 }
 
 
@@ -247,6 +251,17 @@ void *table_column_get(table_t* table, int col) {
    to store... why?
   */
 void table_insert_record(table_t* table, void** values) {
-  /* To be implemented */
+    int i;
+    
+    if (table == NULL) return;
+    if (values == NULL) return;
+    
+    fseek(table->fp, 0L, SEEK_END);
+    
+    for (i = 0; i < table->ncols; i++){
+        fwrite(values[i], value_length(table->types[i] ,values[i]), 1, table->fp);
+    }
+    
+    
   return;
 }
