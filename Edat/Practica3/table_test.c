@@ -18,7 +18,7 @@ close the table, open it again, read the records and print them. */
     
     void **values = NULL;
     
-    values = (void **)malloc(4 * sizeof(void*));
+    values = (void **)malloc(4 * sizeof(void *));
     
     table_create(path, 4, tipos_array);
 
@@ -30,7 +30,7 @@ close the table, open it again, read the records and print them. */
     for (int i = 0; i < ROWS; i++) {
         values[0] = (int *)malloc(sizeof(int));
         values[1] = (int *)malloc(sizeof(int));
-        values[2] = (char *)malloc(STRMAX*sizeof(char));
+        values[2] = (char *)malloc(STRMAX * sizeof(char));
         values[3] = (int *)malloc(sizeof(int));
         
         *((int *) values[0]) = rand()%10;
@@ -44,18 +44,25 @@ close the table, open it again, read the records and print them. */
         free(values[1]);
         free(values[2]);
         free(values[3]);
+        
     }
 
     table_close(tabla);
+    
+
     
     tabla = table_open(path);
     
     position = table_first_pos(tabla);
     
-    while (position != -1) {
+    while (1) {
         rowaux++;
-        
+
         position = table_read_record(tabla, position);
+        
+        if (position == -1) {
+            break;
+        }
         
         // values[0] = (int *)malloc(sizeof(int));
         // values[1] = (int *)malloc(sizeof(int));
@@ -74,9 +81,8 @@ close the table, open it again, read the records and print them. */
         printf("\nRow: %d\n\tValue 1 :%d\tValue 2 :%d\tValue 3 :%s\tValue 4 :%d\t", rowaux, *((int *)values[0]), *((int *)values[1]), (char *)values[2], *((int *)values[3]));
     }
 
-    
-    
-    
+    table_close(tabla);
+
     
     
     free(values);

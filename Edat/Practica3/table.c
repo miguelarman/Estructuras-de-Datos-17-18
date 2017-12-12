@@ -84,7 +84,7 @@ table_t* table_open(char* path) {
         return NULL;
     }
     
-    table->values[0]=malloc(1);
+    table->values[0] = NULL;
     
     table->first = ftell(fp);
   
@@ -199,23 +199,26 @@ long table_last_pos(table_t* table) {
 long table_read_record(table_t* table, long pos) {
     
     int len;
-
-    /*fseek(table->fp, OL, SEEK_END);
-    if (ftell(table->fp) <= pos) {
-        return -1;
-    }*/
+    char *buf = NULL;
     
     if (table_last_pos(table) <= pos || table == NULL) {
         return -1;
     }
     
-    free(table->values[0]);
+    
+    if (table->values[0] != NULL) {
+        free(table->values[0]);
+    }
     
     fseek(table->fp, pos, SEEK_SET);
 
-    fread(&len,sizeof(int), 1, table->fp);
+    fread(&len, sizeof(int), 1, table->fp);
     
-    char *buf = (char *)malloc(len*sizeof(char));
+    buf = (char *)malloc((len + 1)*sizeof(char));
+    
+    if (buf == NULL) {
+        return -1;
+    }
     
     fread(buf, sizeof(char), len, table->fp);
     
@@ -251,17 +254,22 @@ void *table_column_get(table_t* table, int col) {
    to store... why?
   */
 void table_insert_record(table_t* table, void** values) {
-    int i;
+    int i, len = 0;
     
     if (table == NULL) return;
     if (values == NULL) return;
     
     fseek(table->fp, 0L, SEEK_END);
     
-    for (i = 0; i < table->ncols; i++){
-        fwrite(values[i], value_length(table->types[i] ,values[i]), 1, table->fp);
+    for (int j = 0; j < table_ncols(table); j++) {
+        len += value_length(table->types[j], values[j]);
     }
     
+    fwrite(&len, sizeof(int), 1, table->fp);
+    
+    for (i = 0; i < table->ncols; i++){
+        fwrite(values[i], sizeof(char), value_length(table->types[i], values[i]), table->fp);
+    }
     
   return;
 }

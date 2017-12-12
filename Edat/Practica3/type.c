@@ -7,7 +7,7 @@ size_t value_length(type_t type, void* value) {
     switch(type) {
         case INT:
             return sizeof(int);
-        case STR:
+                    case STR:
             return (strlen((char*) value) + 1) * sizeof(char);
         default:
             return 0;
