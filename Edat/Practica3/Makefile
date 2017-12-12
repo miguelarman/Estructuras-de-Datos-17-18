@@ -1,7 +1,7 @@
 ########################################################
 CC=gcc
 CFLAGS = -g -Wall -pedantic -ansi -std=c99
-FILES = table_test
+FILES = table_test initialize_table score suggest
 ########################################################
 # OBJECTSCOMPILEALL = plane.o cube.o game.o print_speed.o windows.o player.o mtype.o stype.o gametime.o readchar.o menu.o compileAll.o 
 # OBJECTSWINDOWS_TEST = windows.o windows_test.o
@@ -9,6 +9,9 @@ FILES = table_test
 # OBJECTSEPI = gametime.o epyleptic.o
 
 OBJECTSTABLE_TEST = table.o table_test.o type.o
+OBJECTSSCORE = table.o type.o score.o
+OBJECTSSUGGEST = table.o type.o suggest.o
+OBJECTSINITIALIZE = table.o type.o initialize_table.o
 ########################################################
 
 all: $(FILES) clear
@@ -48,6 +51,24 @@ table_test: $(OBJECTSTABLE_TEST)
 
 table_test.o: type.h table.h table_test.c
 	$(CC) $(CFLAGS) -c table_test.c
+
+score: $(OBJECTSSCORE)
+	$(CC) $(CFLAGS) -o score $(OBJECTSSCORE)
+
+score.o: type.h table.h score.c
+	$(CC) $(CFLAGS) -c score.c
+
+suggest: $(OBJECTSSUGGEST)
+	$(CC) $(CFLAGS) -o suggest $(OBJECTSSUGGEST)
+
+suggest.o: type.h table.h suggest.c
+	$(CC) $(CFLAGS) -c suggest.c
+
+initialize_table: $(OBJECTSINITIALIZE)
+	$(CC) $(CFLAGS) -o initialize_table $(OBJECTSSUGGEST)
+
+initialize_table.o: type.h table.h initialize_table.c
+	$(CC) $(CFLAGS) -c initialize_table.c
 
 
 # windows.o: windows.c windows.h

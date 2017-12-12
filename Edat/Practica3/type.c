@@ -7,8 +7,12 @@ size_t value_length(type_t type, void* value) {
     switch(type) {
         case INT:
             return sizeof(int);
-                    case STR:
+        case STR:
             return (strlen((char*) value) + 1) * sizeof(char);
+        case LLNG:
+            return sizeof(long long);
+        case DBL:
+            return sizeof(double);
         default:
             return 0;
     }
@@ -22,6 +26,12 @@ void print_value(FILE* f, type_t type, void* value) {
         case STR:
             fprintf(f, "%s", (char*) value);
             break;
+        case LLNG:
+            fprintf(f, "%lld", *((long long*) value));
+            break;
+        case DBL:
+            fprintf(f, "%lf", *((double*) value));
+            break;
     }
 }
 
@@ -32,6 +42,10 @@ int value_cmp(type_t type, void* value1, void* value2) {
             return *((int*) value1) - *((int*) value2); 
         case STR:
             return strcmp((char*) value1, (char*) value2);
+        case LLNG:
+            return *((long long*) value1) - *((long long*) value2);
+        case DBL:
+            return *((double*) value1) - *((double*) value2);
         default:
             return 0;
     }
@@ -42,6 +56,10 @@ type_t type_parse(char* type_name) {
         return INT;
     } else if (strcmp(type_name, "STR") == 0) {
         return STR;
+    } else if (strcmp(type_name, "LLNG") == 0) {
+        return LLNG;
+    } else if (strcmp(type_name, "DBL") == 0) {
+        return DBL;
     } else {
         return -1;
     }
@@ -58,6 +76,14 @@ void* value_parse(type_t type, char* literal) {
         case STR:
             value = malloc((strlen(literal) + 1) * sizeof(char));
             strcpy(value, literal);
+            break;
+        case LLNG:
+            value = malloc(sizeof(long long));
+            *((long long*) value) = atoll(literal);
+            break;
+        case DBL:
+            value = malloc(sizeof(double));
+            *((double*) value) = atof(literal);
             break;
         default:
             value = NULL;
