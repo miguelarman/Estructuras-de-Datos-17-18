@@ -4,11 +4,6 @@ CFLAGS = -g -Wall -pedantic -ansi -std=c99
 LDLIBS = -lodbc
 FILES = table_test score suggest initialize_table
 ########################################################
-# OBJECTSCOMPILEALL = plane.o cube.o game.o print_speed.o windows.o player.o mtype.o stype.o gametime.o readchar.o menu.o compileAll.o 
-# OBJECTSWINDOWS_TEST = windows.o windows_test.o
-# OBJECTSGAME_TEST = game.o cube.o plane.o mtype.o stype.o player.o gametime.o readchar.o game_test.o
-# OBJECTSEPI = gametime.o epyleptic.o
-
 OBJECTSTABLE_TEST = table.o table_test.o type.o
 OBJECTSSCORE = odbc.o table.o type.o score.o
 OBJECTSSUGGEST = odbc.o table.o type.o suggest.o
@@ -72,44 +67,16 @@ initialize_table.o: type.h table.h initialize_table.c
 	$(CC) $(CFLAGS) -c initialize_table.c
 
 
-# windows.o: windows.c windows.h
-# 	$(CC) $(CFLAGS) -c windows.c
 
-# cube.o: cube.c cube.h
-# 	$(CC) $(CFLAGS) -c cube.c
-
-# player.o: player.c player.h 
-# 	$(CC) $(CFLAGS) -c player.c
-
-# mtype.o: mtype.c mtype.h 
-# 	$(CC) $(CFLAGS) -c mtype.c
-
-# stype.o: stype.c stype.h 
-# 	$(CC) $(CFLAGS) -c stype.c
-
-# gametime.o: gametime.c gametime.h 
-# 	$(CC) $(CFLAGS) -c gametime.c
-
-# readchar.o: readchar.c readchar.h 
-# 	$(CC) $(CFLAGS) -c readchar.c
-
-# plane.o: plane.c plane.h player.o cube.o
-# 	$(CC) $(CFLAGS) -c plane.c
-
-# print_speed.o: print_speed.c print_speed.h windows.o
-# 	$(CC) $(CFLAGS) -c print_speed.c
-
-# menu.o: menu.c menu.h
-# 	$(CC) $(CFLAGS) -c menu.c
-
-# game.o: cube.o plane.o mtype.o player.o gametime.o readchar.o game.c game.h
-# 	$(CC) $(CFLAGS) -c game.c
 
 table.o: type.o table.c table.h
 	$(CC) $(CFLAGS) -c table.c
 
 type.o: type.c type.h
 	$(CC) $(CFLAGS) -c type.c
+
+index.o: type.o index.c index.h
+	$(CC) $(CFLAGS) -c index.c
 
 #odbc.o: odbc.c odbc.h
 #	$(CC) $(CFLAGS) -c odbc.c
