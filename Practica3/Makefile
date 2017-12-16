@@ -1,7 +1,8 @@
 ########################################################
 CC=gcc
 CFLAGS = -g -Wall -pedantic -ansi -std=c99
-FILES = table_test initialize_table score suggest
+LDLIBS = -lodbc
+FILES = table_test score suggest initialize_table
 ########################################################
 # OBJECTSCOMPILEALL = plane.o cube.o game.o print_speed.o windows.o player.o mtype.o stype.o gametime.o readchar.o menu.o compileAll.o 
 # OBJECTSWINDOWS_TEST = windows.o windows_test.o
@@ -9,9 +10,9 @@ FILES = table_test initialize_table score suggest
 # OBJECTSEPI = gametime.o epyleptic.o
 
 OBJECTSTABLE_TEST = table.o table_test.o type.o
-OBJECTSSCORE = table.o type.o score.o
-OBJECTSSUGGEST = table.o type.o suggest.o
-OBJECTSINITIALIZE = table.o type.o initialize_table.o
+OBJECTSSCORE = odbc.o table.o type.o score.o
+OBJECTSSUGGEST = odbc.o table.o type.o suggest.o
+OBJECTSINITIALIZE = odbc.o table.o type.o initialize_table.o
 ########################################################
 
 all: $(FILES) clear
@@ -53,19 +54,19 @@ table_test.o: type.h table.h table_test.c
 	$(CC) $(CFLAGS) -c table_test.c
 
 score: $(OBJECTSSCORE)
-	$(CC) $(CFLAGS) -o score $(OBJECTSSCORE)
+	$(CC) $(CFLAGS) $(OBJECTSSCORE) $(LDLIBS) -o score
 
-score.o: type.h table.h score.c
+score.o: type.h table.h odbc.h score.c
 	$(CC) $(CFLAGS) -c score.c
 
 suggest: $(OBJECTSSUGGEST)
-	$(CC) $(CFLAGS) -o suggest $(OBJECTSSUGGEST)
+	$(CC) $(CFLAGS) $(OBJECTSSUGGEST) $(LDLIBS) -o suggest
 
 suggest.o: type.h table.h suggest.c
 	$(CC) $(CFLAGS) -c suggest.c
 
 initialize_table: $(OBJECTSINITIALIZE)
-	$(CC) $(CFLAGS) -o initialize_table $(OBJECTSSUGGEST)
+	$(CC) $(CFLAGS) $(OBJECTSINITIALIZE) $(LDLIBS) -o initialize_table
 
 initialize_table.o: type.h table.h initialize_table.c
 	$(CC) $(CFLAGS) -c initialize_table.c
@@ -110,7 +111,8 @@ table.o: type.o table.c table.h
 type.o: type.c type.h
 	$(CC) $(CFLAGS) -c type.c
 
-
+#odbc.o: odbc.c odbc.h
+#	$(CC) $(CFLAGS) -c odbc.c
 
 
 
