@@ -31,7 +31,7 @@ int main(int argc, char **argv){
     score = atoi (argv[1]);
     
     
-        /* CONNECT */
+    /* CONNECT */
     ret = odbc_connect(&env, &dbc);
     if (!SQL_SUCCEEDED(ret)) {
         printf("\nError connecting\n");
@@ -158,9 +158,7 @@ int main(int argc, char **argv){
             }
             
             printf("%s\t%s", (char *)author ,(char*)title);   
-            
-            free(isbn);
-        
+                    
         }
     }
     
