@@ -86,14 +86,6 @@ int main (int argc, char **argv) {
                     printf("%s", (char *)isbn);
 
 
-    /* free up statement handle */
-    SQLFreeHandle(SQL_HANDLE_STMT, stmt);
-
-    /* DISCONNECT */
-    ret = odbc_disconnect(env, dbc);
-    if (!SQL_SUCCEEDED(ret)) {
-        return EXIT_FAILURE;
-    }
 
 
 
@@ -179,6 +171,15 @@ int main (int argc, char **argv) {
 	    	}
 	    }
     	free(values);
+    }
+    
+    /* free up statement handle */
+    SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+
+    /* DISCONNECT */
+    ret = odbc_disconnect(env, dbc);
+    if (!SQL_SUCCEEDED(ret)) {
+        return EXIT_FAILURE;
     }
 
     
