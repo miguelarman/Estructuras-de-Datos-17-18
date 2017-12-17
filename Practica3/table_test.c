@@ -64,19 +64,9 @@ close the table, open it again, read the records and print them. */
             break;
         }
         
-        // values[0] = (int *)malloc(sizeof(int));
-        // values[1] = (int *)malloc(sizeof(int));
-        // values[2] = (char *)malloc(STRMAX*sizeof(char));
-        // values[3] = (int *)malloc(sizeof(int));
-        
         for (int j = 0; j < table_ncols(tabla); j++) {
             values[j] = table_column_get(tabla, j);
         }
-        
-        // free(values[0]);
-        // free(values[1]);
-        // free(values[2]);
-        // free(values[3]);
         
         printf("\nRow: %d\n\tValue 1 :%d\tValue 2 :%lld\tValue 3 :%s\tValue 4 :%lf\t", rowaux, *((int *)values[0]), *((long long *)values[1]), (char *)values[2], *((double *)values[3]));
     }
