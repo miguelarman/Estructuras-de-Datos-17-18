@@ -72,7 +72,6 @@ int main(int argc, char **argv){
             values[j] = table_column_get(table, j);
         }
         
-        printf("%d\n", *((int *) values[2]));
         
         if (*((int *) values[2]) == score){
             
