@@ -139,6 +139,8 @@ int main(int argc, char **argv){
             }
             
             printf("%s\t%s", (char *)author ,(char*)title);   
+            
+            free(isbn);
         
         }
     }
