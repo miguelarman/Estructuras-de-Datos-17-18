@@ -7,7 +7,7 @@ typedef struct index_ index_t;
 
 /* 
    Creates a file for saving an empty index. The index is initialized
-   to be of the specific tpe (in the basic version this is always INT)
+   to be of the specific type (in the basic version this is always INT)
    and to contain 0 entries.
  */
 int index_create(int type, char *filename);

@@ -4,7 +4,6 @@
 #include "table.h"
 #include "type.h"
 
-/*USAR -std=c99*/
 
 struct table_ {
   FILE *fp;

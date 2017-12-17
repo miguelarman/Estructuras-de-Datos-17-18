@@ -133,6 +133,8 @@ int main(int argc, char **argv){
         }
     }
     
+    printf("\n\n");
+    
     /* DISCONNECT */
     ret = odbc_disconnect(env, dbc);
     if (!SQL_SUCCEEDED(ret)) {
