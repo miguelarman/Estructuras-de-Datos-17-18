@@ -129,8 +129,6 @@ int main(int argc, char **argv){
                     
             /* free up statement handle */
             SQLFreeHandle(SQL_HANDLE_STMT, stmt);
-            
-                    
         }
     }
     
@@ -140,7 +138,7 @@ int main(int argc, char **argv){
         return EXIT_FAILURE;
     }
     
-    close_table(PATH);
+    table_close(table);
     
     return 0;
 }
