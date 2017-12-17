@@ -47,14 +47,14 @@ int main(int argc, char **argv){
 	}
 	
 	while (1) {
-        position = table_read_record(tabla, position);
+        position = table_read_record(table, position);
         
         if (position == -1) {
             break;
         }
         
-        for (int j = 0; j < table_ncols(tabla); j++) {
-            values[j] = table_column_get(tabla, j);
+        for (int j = 0; j < table_ncols(table); j++) {
+            values[j] = table_column_get(table, j);
         }
         
         if (*(int *)values[2]==score){
