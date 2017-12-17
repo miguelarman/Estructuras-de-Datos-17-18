@@ -59,8 +59,7 @@ int main(int argc, char **argv){
 	}
 	
 	
-	
-	
+	position = table_first_pos(table);
 	
 	while (1) {
         position = table_read_record(table, position);
@@ -72,7 +71,8 @@ int main(int argc, char **argv){
         for (int j = 0; j < table_ncols(table); j++) {
             values[j] = table_column_get(table, j);
         }
-        printf("%d\n", *((int*)values[2]));
+        
+        printf("%d\n", *((int *) values[2]));
         
         if (*((int *) values[2]) == score){
             
