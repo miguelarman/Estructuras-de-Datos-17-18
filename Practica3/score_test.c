@@ -15,7 +15,7 @@ close the table, open it again, read the records and print them. */
     int rowaux = 0;
     void **values = NULL;
 
-    tabla = table_open(path);
+    tabla = table_open(PATH);
     
     position = table_first_pos(tabla);
     

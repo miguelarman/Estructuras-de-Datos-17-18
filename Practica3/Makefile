@@ -5,6 +5,7 @@ LDLIBS = -lodbc
 FILES = table_test score suggest initialize_table
 ########################################################
 OBJECTSTABLE_TEST = table.o table_test.o type.o
+OBJECTSSCORE_TEST = table.o score_test.o type.o
 OBJECTSSCORE = odbc.o table.o type.o score.o
 OBJECTSSUGGEST = odbc.o table.o type.o suggest.o
 OBJECTSINITIALIZE = odbc.o table.o type.o initialize_table.o
@@ -47,6 +48,12 @@ table_test: $(OBJECTSTABLE_TEST)
 
 table_test.o: type.h table.h table_test.c
 	$(CC) $(CFLAGS) -c table_test.c
+
+score_test: $(OBJECTSSCORE_TEST)
+	$(CC) $(CFLAGS) -o score_test $(OBJECTSSCORE_TEST)
+
+score_test.o: type.h table.h score_test.c
+	$(CC) $(CFLAGS) -c score_test.c
 
 score: $(OBJECTSSCORE)
 	$(CC) $(CFLAGS) $(OBJECTSSCORE) $(LDLIBS) -o score

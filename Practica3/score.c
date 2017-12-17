@@ -82,6 +82,8 @@ int main (int argc, char **argv) {
     if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     	ret = SQLGetData(stmt, 1, SQL_C_CHAR, isbn, sizeof(isbn), NULL);
     }
+    
+                    printf("%s", (char *)isbn);
 
 
     /* free up statement handle */
