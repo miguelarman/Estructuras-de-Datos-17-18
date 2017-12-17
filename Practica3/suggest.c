@@ -86,9 +86,8 @@ int main(int argc, char **argv){
             
             
             
-            /*Get the title*/
 
-	        sprintf(buf, "SELECT title FROM edition WHERE isbn = '%s';", (char*)values[2]);
+	        sprintf(buf, "SELECT title, author FROM edition WHERE isbn = '%s';", (char*)values[2]);
             ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
             if (!SQL_SUCCEEDED(ret)) {
                 printf("\nError executing query");
@@ -99,19 +98,19 @@ int main(int argc, char **argv){
 
             if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     	       ret = SQLGetData(stmt, 1, SQL_C_CHAR, title, sizeof(title), NULL);
+    	       ret = SQLGetData(stmt, 2, SQL_C_CHAR, author, sizeof(author), NULL);
             } else {
                 printf("\nError fetching data");
             }
             
             
-            ret = SQLCloseCursor(stmt);
+            /*ret = SQLCloseCursor(stmt);
             if (!SQL_SUCCEEDED(ret)) {
                 printf("\nError closing cursor for argv[%d]\n", i);
                 odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
                 return EXIT_FAILURE;
             }
             
-            /*Get the author*/
 
 	        sprintf(buf, "SELECT author FROM edition WHERE isbn = '%s';", (char*)values[2]);
             ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
@@ -124,21 +123,28 @@ int main(int argc, char **argv){
 
             if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     	       ret = SQLGetData(stmt, 1, SQL_C_CHAR, author, sizeof(author), NULL);
-            }
+            }*/
             
             
-            ret = SQLCloseCursor(stmt);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError closing cursor for argv[%d]\n", i);
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
             
-            printf("%s\t%s", (char *)author ,(char*)title);   
+            
+            
+            printf("\n%s\t%s", (char *) author, (char*) title);   
+                    
+            /* free up statement handle */
+            SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+            
                     
         }
     }
     
+    /* DISCONNECT */
+    ret = odbc_disconnect(env, dbc);
+    if (!SQL_SUCCEEDED(ret)) {
+        return EXIT_FAILURE;
+    }
+    
+    close_table(PATH);
     
     return 0;
 }
