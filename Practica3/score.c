@@ -59,7 +59,7 @@ int main (int argc, char **argv) {
 
 	/*Get the ISBN*/
 
-	ret = SQLPrepare(stmt, (SQLCHAR *) "SELECT isbn FROM edition WHERE title = '?'", SQL_NTS);
+	/*ret = SQLPrepare(stmt, (SQLCHAR *) "SELECT isbn FROM edition WHERE title = '?'", SQL_NTS);
     if (!SQL_SUCCEEDED(ret)) {
         printf("\nError preparing query for purchaseid in \"add\"\n");
         odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
@@ -78,15 +78,15 @@ int main (int argc, char **argv) {
         printf("\nError executing query for purchaseid in \"add\"\n");
         odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
         return EXIT_FAILURE;
-    }
+    }*/
     
-    /*sprintf(buf, "SELECT isbn FROM edition WHERE title = '%s';", argv[1]);
+    sprintf(buf, "SELECT isbn FROM edition WHERE title = '%s';", argv[1]);
     ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
     if (!SQL_SUCCEEDED(ret)) {
         printf("\nError executing query for inserting into purchases for argv[%d]");
         odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
         return EXIT_FAILURE;
-    }*/
+    }
     
     
 
@@ -94,9 +94,6 @@ int main (int argc, char **argv) {
     if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     	ret = SQLGetData(stmt, 1, SQL_C_CHAR, isbn, sizeof(isbn), NULL);
     }
-    
-                    printf("%s", (char *)isbn);
-
 
 
 
@@ -159,8 +156,6 @@ int main (int argc, char **argv) {
     
 
     strcpy((char *) values[0], (char *)isbn);
-                    printf("%s", (char *)values[0]);
-
     strcpy((char *) values[1], argv[1]);
     *((int *) values[2]) = atoi(argv[2]);
     *((int *) values[3]) = 0;
