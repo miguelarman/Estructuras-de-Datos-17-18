@@ -11,7 +11,7 @@
 
 int main(int argc, char **argv){
     
-    int score = 0, i=0;
+    int score = 0;
     long position = 0;
     SQLHENV env;
     SQLHDBC dbc;
