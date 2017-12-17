@@ -21,7 +21,7 @@ int main(int argc, char **argv){
     table_t *table = NULL;
     void **values = NULL;
     char *isbn=NULL;
-    char buff[500];
+    char buf[500];
     
     
     if (argc<2){
@@ -84,10 +84,7 @@ int main(int argc, char **argv){
                 return EXIT_FAILURE;
             }
             
-            
-            
-
-	        sprintf(buf, "SELECT title, author FROM edition WHERE isbn = '%s';", (char*)values[2]);
+            sprintf(buf, "SELECT title, author FROM edition WHERE isbn = '%s';", (char*)values[2]);
             ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
             if (!SQL_SUCCEEDED(ret)) {
                 printf("\nError executing query");
