@@ -46,6 +46,24 @@ int main(int argc, char **argv){
 		return -1;
 	}
 	
+	
+	values = (void **)malloc(table_ncols(table) * sizeof(void *));
+	if (values == NULL) {
+	    printf("\nError allocating values\n");
+	    table_close(table);
+	    
+	    /* free up statement handle */
+	    ret = SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+	    /* DISCONNECT */
+	    ret = odbc_disconnect(env, dbc);
+	    
+	    return -1;
+	}
+	
+	
+	
+	
+	
 	while (1) {
         position = table_read_record(table, position);
         
