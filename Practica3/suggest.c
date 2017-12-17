@@ -72,8 +72,11 @@ int main(int argc, char **argv){
         for (int j = 0; j < table_ncols(table); j++) {
             values[j] = table_column_get(table, j);
         }
+        printf("%d\n", *((int*))values[2]);
         
         if (*((int *) values[2]) == score){
+            
+            printf("%d", *((int*))values[2]);
             
              /* Allocate a statement handle */
             ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc, &stmt);
@@ -137,6 +140,8 @@ int main(int argc, char **argv){
     if (!SQL_SUCCEEDED(ret)) {
         return EXIT_FAILURE;
     }
+    
+    free(values);
     
     table_close(table);
     
