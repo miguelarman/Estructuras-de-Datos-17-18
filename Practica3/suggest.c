@@ -82,8 +82,8 @@ int main(int argc, char **argv){
                 odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
                 return EXIT_FAILURE;
             }
-            isbn = (char*) malloc(STRMAX * sizeof(char)); 
-            strcpy (isbn, (char*)values[0]);
+            
+            
             
             /*Get the title*/
 
@@ -94,7 +94,7 @@ int main(int argc, char **argv){
                 return EXIT_FAILURE;
             }
 
-            ret = SQLBindParameter(stmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, isbn, 0, NULL);
+            ret = SQLBindParameter(stmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, (char*)values[0], 0, NULL);
             if (!SQL_SUCCEEDED(ret)) {
                 printf("\nError binding parameter in query for isbn\n");
                 odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
@@ -130,7 +130,7 @@ int main(int argc, char **argv){
                 return EXIT_FAILURE;
             }
 
-            ret = SQLBindParameter(stmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, isbn, 0, NULL);
+            ret = SQLBindParameter(stmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, (char*)values[0], 0, NULL);
             if (!SQL_SUCCEEDED(ret)) {
                 printf("\nError binding parameter in query for isbn\n");
                 odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
