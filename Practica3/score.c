@@ -155,6 +155,8 @@ int main (int argc, char **argv) {
     
 
     strcpy((char *) values[0], (char *)isbn);
+                    printf("%s", (char *)values[0]);
+
     strcpy((char *) values[1], argv[1]);
     *((int *) values[2]) = atoi(argv[2]);
     *((int *) values[3]) = 0;

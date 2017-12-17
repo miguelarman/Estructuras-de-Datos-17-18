@@ -34,7 +34,7 @@ close the table, open it again, read the records and print them. */
             values[j] = table_column_get(tabla, j);
         }
         
-        printf("\nRow: %d\n\tValue 1 :%s\tValue 2 :%s\tValue 3 :%d\tValue 4 :%d\t", rowaux, (char *) values[0], (char *) values[1], *((int *) values[2]), *((int *) values[3]));
+        printf("\nRow: %d\n\tValue 1: %s\tValue 2: %s\tValue 3: %d\tValue 4: %d\t", rowaux, (char *) values[0], (char *) values[1], *((int *) values[2]), *((int *) values[3]));
     }
 
     table_close(tabla);
