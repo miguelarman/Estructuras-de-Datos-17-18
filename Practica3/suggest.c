@@ -11,14 +11,16 @@
 
 int main(int argc, char **argv){
     
-    int score = 0;
+    int score = 0, i=0;
+    long position = 0;
     SQLHENV env;
     SQLHDBC dbc;
     SQLHSTMT stmt;
     SQLRETURN ret;
-    SQLCHAR isbn[STRMAX], title[STRMAX], author[STRMAX];
+    SQLCHAR title[STRMAX], author[STRMAX];
     table_t *table = NULL;
     void **values = NULL;
+    char *isbn=NULL;
     
     
     if (argc<2){
@@ -55,7 +57,7 @@ int main(int argc, char **argv){
             values[j] = table_column_get(tabla, j);
         }
         
-        if ((int *)values[2]==score){
+        if (*(int *)values[2]==score){
              /* Allocate a statement handle */
             ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc, &stmt);
             if (!SQL_SUCCEEDED(ret)) {

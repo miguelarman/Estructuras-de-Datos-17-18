@@ -10,7 +10,7 @@ typedef struct index_ index_t;
    to be of the specific tpe (in the basic version this is always INT)
    and to contain 0 entries.
  */
-int index_create(int type);
+int index_create(int type, char *filename);
 
 /* 
    Opens a previously created index: reads the contents of the index
@@ -30,7 +30,7 @@ index_t* index_open(char* path);
    Saves the current state of index in the file it came from. See the
    NOTE to index_open.
 */
-int index_save(index_t* index, char* path);
+int index_save(index_t* index);
 
 
 /* 
@@ -60,7 +60,8 @@ int index_put(index_t *index, int key, long pos);
    using binary search.
 
 */
-long **index_get(index_t *index, int key, int* nposs);
+long *index_get(index_t *index, int key, int* nposs);
+
 
 /* 
    Closes the index by freeing the allocated resources 
@@ -68,3 +69,6 @@ long **index_get(index_t *index, int key, int* nposs);
 void index_close(index_t *index);
 
 #endif
+
+
+

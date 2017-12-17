@@ -28,7 +28,7 @@ int mycmp(const void *kptr, const void *e) {
    to be of the specific tpe (in the basic version this is always INT)
    and to contain 0 entries.
  */
-int index_create(int type) {
+int index_create(int type, char *filename) {
   return 0;
 }
 
@@ -52,7 +52,7 @@ index_t* index_open(char* path) {
    Saves the current state of index in the file it came from. See the
    NOTE to index_open.
 */
-int index_save(index_t* index, char* path) {
+int index_save(index_t* index) {
   return 0;
 }
 
@@ -86,7 +86,7 @@ int index_put(index_t *index, int key, long pos) {
    using binary search.
 
 */
-long **index_get(index_t *index, int key, int* nposs) {
+long *index_get(index_t *index, int key, int* nposs) {
   return NULL;
 }
 
