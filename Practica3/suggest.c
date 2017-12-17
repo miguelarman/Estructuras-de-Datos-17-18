@@ -51,9 +51,7 @@ int main(int argc, char **argv){
 	if (values == NULL) {
 	    printf("\nError allocating values\n");
 	    table_close(table);
-	    
-	    /* free up statement handle */
-	    ret = SQLFreeHandle(SQL_HANDLE_STMT, stmt);
+
 	    /* DISCONNECT */
 	    ret = odbc_disconnect(env, dbc);
 	    
@@ -75,7 +73,8 @@ int main(int argc, char **argv){
             values[j] = table_column_get(table, j);
         }
         
-        if (*(int *)values[2]==score){
+        if (*((int *) values[2]) == score){
+            
              /* Allocate a statement handle */
             ret = SQLAllocHandle(SQL_HANDLE_STMT, dbc, &stmt);
             if (!SQL_SUCCEEDED(ret)) {
