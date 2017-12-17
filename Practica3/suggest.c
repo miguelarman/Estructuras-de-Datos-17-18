@@ -21,6 +21,7 @@ int main(int argc, char **argv){
     table_t *table = NULL;
     void **values = NULL;
     char *isbn=NULL;
+    char buff[500];
     
     
     if (argc<2){
@@ -87,23 +88,10 @@ int main(int argc, char **argv){
             
             /*Get the title*/
 
-	        ret = SQLPrepare(stmt, (SQLCHAR *) "SELECT title FROM edition WHERE isbn = '?';", SQL_NTS);
+	        sprintf(buf, "SELECT title FROM edition WHERE isbn = '%s';", (char*)values[2]);
+            ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
             if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError preparing query for purchaseid in \"add\"\n");
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
-
-            ret = SQLBindParameter(stmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, (char*)values[0], 0, NULL);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError binding parameter in query for isbn\n");
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
-
-            ret = SQLExecute(stmt);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError executing query for purchaseid in \"add\"\n");
+                printf("\nError executing query");
                 odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
                 return EXIT_FAILURE;
             }
@@ -111,6 +99,8 @@ int main(int argc, char **argv){
 
             if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
     	       ret = SQLGetData(stmt, 1, SQL_C_CHAR, title, sizeof(title), NULL);
+            } else {
+                printf("\nError fetching data");
             }
             
             
@@ -123,23 +113,10 @@ int main(int argc, char **argv){
             
             /*Get the author*/
 
-	        ret = SQLPrepare(stmt, (SQLCHAR *) "SELECT author FROM edition WHERE isbn = '?';", SQL_NTS);
+	        sprintf(buf, "SELECT author FROM edition WHERE isbn = '%s';", (char*)values[2]);
+            ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
             if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError preparing query for purchaseid in \"add\"\n");
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
-
-            ret = SQLBindParameter(stmt, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_CHAR, 0, 0, (char*)values[0], 0, NULL);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError binding parameter in query for isbn\n");
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
-
-            ret = SQLExecute(stmt);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError executing query for purchaseid in \"add\"\n");
+                printf("\nError executing query for inserting into purchases for argv[%d]");
                 odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
                 return EXIT_FAILURE;
             }
