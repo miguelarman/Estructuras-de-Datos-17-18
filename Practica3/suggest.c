@@ -20,7 +20,6 @@ int main(int argc, char **argv){
     SQLCHAR title[STRMAX], author[STRMAX];
     table_t *table = NULL;
     void **values = NULL;
-    char *isbn=NULL;
     char buf[500];
     
     
