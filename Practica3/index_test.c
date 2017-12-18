@@ -28,7 +28,7 @@ int main () {
         return -1;
     }
     
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 15; i++) {
         key_aux = rand()%4 + 1;
         pos_aux = 0L + (long) rand()%100;
         
