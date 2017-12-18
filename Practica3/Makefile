@@ -2,7 +2,7 @@
 CC=gcc
 CFLAGS = -g -Wall -pedantic -ansi -std=c99
 LDLIBS = -lodbc
-FILES = table_test score suggest initialize_table
+FILES = table_test index_test score suggest initialize_table
 ########################################################
 OBJECTSTABLE_TEST = table.o table_test.o type.o
 OBJECTSINDEX_TEST = index.o index_test.o type.o

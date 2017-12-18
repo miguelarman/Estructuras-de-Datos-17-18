@@ -21,17 +21,15 @@ int main () {
     
     return_aux = index_create(INT, path);
     comprobar(return_aux);
-    
-    
-    
+        
     index = index_open(path);
     if (index == NULL) {
         printf("Error opening index");
         return -1;
     }
     
-    for (int i = 0; i < 10; i++) {
-        key_aux = rand()%3 + 1;
+    for (int i = 0; i < 25; i++) {
+        key_aux = rand()%4 + 1;
         pos_aux = 0L + (long) rand()%100;
         
         
@@ -53,11 +51,11 @@ int main () {
     
     index = index_open(path);
     
-    for (int k = 1; k <= 3; k++) {
+    for (int k = 1; k <= 4; k++) {
         long_array = index_get(index, k, &nposs);
         
         
-        printf("\nKey: %d (nposs: %d)", k, nposs);
+        printf("\nKey: %d (num_pos: %d)", k, nposs);
         for (int l = 0; l < nposs; l++) {
             printf("\t%ld", long_array[l]);
         }

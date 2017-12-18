@@ -83,7 +83,7 @@ int main (int argc, char **argv) {
     sprintf(buf, "SELECT isbn FROM edition WHERE title = '%s';", argv[1]);
     ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
     if (!SQL_SUCCEEDED(ret)) {
-        printf("\nError executing query for inserting into purchases for argv[%d]");
+        printf("\nError executing query");
         odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
         return EXIT_FAILURE;
     }
