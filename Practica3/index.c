@@ -103,7 +103,7 @@ index_t* index_open(char* path) {
     
     
     fread(&type, sizeof(int), 1, pf);
-    fread(&(pi->n_keys), sizeof(int), 1, pf)
+    fread(&(pi->n_keys), sizeof(int), 1, pf);
     
     pi->keys = (irecord **)malloc((pi->n_keys) * sizeof(irecord *));
     if (pi->keys == NULL) {
@@ -201,14 +201,14 @@ void index_close(index_t *index) {
     }
     for(int i=0; i<index->n_keys; i++){
         if (index->keys[i]!=NULL){
-            if(index->keys[i]->position!=NULL){
-                free(index->keys[i]->position);
+            if(index->keys[i]->positions != NULL){
+                free(index->keys[i]->positions);
             }
             free(index->keys[i]);
         }
     }
-    if (path!=NULL){
-    free(path);
+    if (index->path != NULL){
+      free(index->path);
     }
     free(index);
 }
