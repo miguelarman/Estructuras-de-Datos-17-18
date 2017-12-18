@@ -75,7 +75,6 @@ int index_create(int type, char *filename) {
 index_t* index_open(char* path) {
     
     index_t *pi = NULL;
-    int num_pos;
     FILE *pf = NULL;
     
     if (path == NULL) {
@@ -99,7 +98,7 @@ index_t* index_open(char* path) {
   
     
     pf = fopen (path, "r");
-    
+    pi->n_keys = 0;             /*Avoids notes in make*/
     
     fread(&(pi->type), sizeof(int), 1, pf);
     fread(&(pi->n_keys), sizeof(int), 1, pf);
@@ -125,9 +124,9 @@ index_t* index_open(char* path) {
         
         fread(&(pi->keys[i]->key), sizeof(int), 1, pf);
         
-        fread(&num_pos, sizeof(int), 1, pf);
+        fread(&(pi->keys[i]->amount), sizeof(int), 1, pf);
         
-        pi->keys[i]->positions = (long *)malloc(num_pos * sizeof(long));
+        pi->keys[i]->positions = (long *)malloc((pi->keys[i]->amount) * sizeof(long));
         if (pi->keys[i]->positions == NULL) {
             for (int j = 0; j < i; j++) {
                 free(pi->keys[j]);
@@ -138,11 +137,11 @@ index_t* index_open(char* path) {
             return NULL;
         }
         
-        fread(pi->keys[i]->positions, sizeof(long), num_pos, pf);
+        fread(pi->keys[i]->positions, sizeof(long), pi->keys[i]->amount, pf);
         
-        
-        pi->keys[i]->amount = num_pos;
     }
+    
+    fclose(pf);
     
     return pi;
     
@@ -207,6 +206,8 @@ int index_save(index_t* index) {
         fwrite(index->keys[j]->positions, sizeof(long), index->keys[j]->amount, pf);
     }
     
+    fclose(pf);
+    
     return 0;
 }
 
@@ -225,7 +226,9 @@ int index_put(index_t *index, int key, long pos) {
         return -1;
     }
     
-    while (index->keys[i]->key < key || i < index->n_keys) {
+    while (i < index->n_keys) {
+        if (index->keys[i]->key >= key) break;
+        
         i++;
     }
     
@@ -257,6 +260,8 @@ int index_put(index_t *index, int key, long pos) {
         return 0;
         
     } else if (i == 0) {       /*Key is smaller than anyone in the index*/
+        
+        /*COMPROBACION EN DOS BUCLES*/
         
         index->n_keys++;
         
@@ -301,7 +306,9 @@ int index_put(index_t *index, int key, long pos) {
         
         intaux = index->keys[i]->amount - 1;
         
-        while (intaux > 0 || index->keys[i]->positions[intaux] < index->keys[i]->positions[intaux - 1]) {
+        while (intaux > 0) {
+            
+            if (index->keys[i]->positions[intaux] >= index->keys[i]->positions[intaux - 1]) break;
             
             longaux = index->keys[i]->positions[intaux];
             index->keys[i]->positions[intaux] = index->keys[i]->positions[intaux - 1];
@@ -346,7 +353,9 @@ int index_put(index_t *index, int key, long pos) {
         
         
         return 0;
-    } 
+    } else {
+        printf("Problem with index_put");
+    }
     
     
     return -1;
@@ -376,24 +385,27 @@ long *index_get(index_t *index, int key, int* nposs) {
   if (index==NULL){
       return NULL;
   }
-  long *poss;
+  long *poss = NULL;
   int p = 1;
   int u = index->n_keys;
   
     while (u >= p) {
        int medio = (u+p)/2;
       
-        if (index->keys[medio]->key==key){
+        if (index->keys[medio]->key == key){
             *nposs = index->keys[medio]->amount;
-            poss = (long *)malloc((index->keys[medio]->amount)*sizeof(long));
+            
+            poss = (long *)malloc((index->keys[medio]->amount) * sizeof(long));
+            if (poss == NULL) return NULL;
             
             for (int i=0; i < index->keys[medio]->amount ; i++){
                 poss[i] = index->keys[medio]->positions[i];
             }
+            
             return poss;
-        }else if(index->keys[medio]->key>key){
+        } else if(index->keys[medio]->key>key){
             u = medio - 1;
-        }else if (index->keys[medio]->key<key){
+        } else if (index->keys[medio]->key<key){
             p = medio + 1;
         }
     }
@@ -409,13 +421,18 @@ void index_close(index_t *index) {
     if (index==NULL){
         return;
     }
-    for(int i=0; i<index->n_keys; i++){
-        if (index->keys[i]!=NULL){
-            if(index->keys[i]->positions != NULL){
-                free(index->keys[i]->positions);
+    
+    if (index->keys != NULL) {
+        for(int i=0; i<index->n_keys; i++){
+            if (index->keys[i]!=NULL){
+                if(index->keys[i]->positions != NULL){
+                    free(index->keys[i]->positions);
+                }
+                free(index->keys[i]);
             }
-            free(index->keys[i]);
         }
+        
+        free(index->keys);
     }
     if (index->path != NULL){
       free(index->path);
