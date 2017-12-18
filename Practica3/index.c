@@ -44,15 +44,15 @@ int index_create(int type, char *filename) {
         return -1;
     }
     
-    pf = fopen(filename, "w");
-    if (pf == NULL) {
+    fp = fopen(filename, "w");
+    if (fp == NULL) {
         return;
     }
     
-    fwrite(&type, sizeof(int), 1, pf);
-    fwrite(&zero, sizeof(int), 1, pf);
+    fwrite(&type, sizeof(int), 1, fp);
+    fwrite(&zero, sizeof(int), 1, fp);
     
-    fclose(pf);
+    fclose(fp);
     
     return 0;
     
