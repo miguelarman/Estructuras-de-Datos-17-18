@@ -14,6 +14,7 @@ struct index_ {
     char *path;
     irecord **keys;
     int n_keys;
+    int type;
 };
 
 
@@ -27,6 +28,7 @@ int mycmp(const void *kptr, const void *e) {
   else 
     return 0;
   */
+  return 0;
 }
 
 
@@ -73,7 +75,7 @@ int index_create(int type, char *filename) {
 index_t* index_open(char* path) {
     
     index_t *pi = NULL;
-    int type, num_pos;
+    int num_pos;
     FILE *pf = NULL;
     
     if (path == NULL) {
@@ -99,7 +101,7 @@ index_t* index_open(char* path) {
     pf = fopen (path, "r");
     
     
-    fread(&type, sizeof(int), 1, pf);
+    fread(&(pi->type), sizeof(int), 1, pf);
     fread(&(pi->n_keys), sizeof(int), 1, pf);
     
     pi->keys = (irecord **)malloc((pi->n_keys) * sizeof(irecord *));
@@ -143,6 +145,41 @@ index_t* index_open(char* path) {
     }
     
     return pi;
+    
+    
+    
+    
+    /*
+    NOTE:
+    
+    We implemented this version of this function assuming the file would contain ordered data (both keys and positions).
+    
+    Other implementation, if this would not be satisfied, is the following, in which for every pair of key and position
+    we call the function index_put(index_t *index, int key, long pos), which manages itself memory and order:
+    
+    
+    
+    fread(&type, sizeof(int), 1, pf);
+    fread(&num_keys, sizeof(int), 1, pf);
+    
+    for (int i = 0; i < num_keys; i++) {
+        fread(&key_aux, sizeof(int), 1, pf);
+        
+        fread(&num_pos, sizeof(int), 1, pf);
+        
+        for (int j = 0; j < num_pos; j++) {
+            fread(&pos_aux, sizeof(long), 1, pf);
+            
+            index_put(index, key_aux, pos_aux);
+        }
+    }
+    
+    return pi;
+    
+    
+    
+    This is a more compact version of the function, as well
+    */
 }
 
 /* 
@@ -150,8 +187,27 @@ index_t* index_open(char* path) {
    NOTE to index_open.
 */
 int index_save(index_t* index) {
-  
-  return 0;
+    
+    FILE *pf = NULL;
+    
+    
+    pf = (FILE *)fopen(index->path, "w");
+    if (pf == NULL) {
+        return -1;
+    }
+    
+    fwrite(&(index->type), sizeof(int), 1, pf);
+    fwrite(&(index->n_keys), sizeof(int), 1, pf);
+    
+    for (int j = 0; j < index->n_keys; j++) {
+        fwrite(&(index->keys[j]->key), sizeof(int), 1, pf);
+        
+        fwrite(&(index->keys[j]->amount), sizeof(int), 1, pf);
+        
+        fwrite(index->keys[j]->positions, sizeof(long), index->keys[j]->amount, pf);
+    }
+    
+    return 0;
 }
 
 
@@ -236,22 +292,22 @@ int index_put(index_t *index, int key, long pos) {
         
         index->keys[i]->amount++;
         
-        index->keys[i]->positions = (long *)realloc((index->keys[i]->amount) * sizeof(long));
+        index->keys[i]->positions = (long *)realloc(index->keys[i]->positions, (index->keys[i]->amount) * sizeof(long));
         if (index->keys[i]->positions == NULL) {
             return -1;
         }
         
-        index->keys[i]->positions[amount - 1] = pos;
+        index->keys[i]->positions[index->keys[i]->amount - 1] = pos;
         
-        intaux = amount - 1;
+        intaux = index->keys[i]->amount - 1;
         
-        while (j > 0 || index->keys[i]->positions[j] < index->keys[i]->positions[j - 1]) {
+        while (intaux > 0 || index->keys[i]->positions[intaux] < index->keys[i]->positions[intaux - 1]) {
             
-            longaux = index->keys[i]->positions[j];
-            index->keys[i]->positions[j] = index->keys[i]->positions[j - 1];
-            index->keys[i]->positions[j - 1] = longaux;
+            longaux = index->keys[i]->positions[intaux];
+            index->keys[i]->positions[intaux] = index->keys[i]->positions[intaux - 1];
+            index->keys[i]->positions[intaux - 1] = longaux;
             
-            j--;
+            intaux--;
         }
         
         
@@ -325,19 +381,19 @@ long *index_get(index_t *index, int key, int* nposs) {
   int u = index->n_keys;
   
     while (u >= p) {
-        medio = (u+p)/2;
+       int medio = (u+p)/2;
       
         if (index->keys[medio]->key==key){
-            *nposs = 0;
+            *nposs = index->keys[medio]->amount;
             poss = (long *)malloc((index->keys[medio]->amount)*sizeof(long));
+            
             for (int i=0; i < index->keys[medio]->amount ; i++){
                 poss[i] = index->keys[medio]->positions[i];
-                *nposs++;
             }
             return poss;
-        }else if(index->keys[medio]>key){
+        }else if(index->keys[medio]->key>key){
             u = medio - 1;
-        }else if (index->keys[medio]<key){
+        }else if (index->keys[medio]->key<key){
             p = medio + 1;
         }
     }
