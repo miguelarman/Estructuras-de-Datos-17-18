@@ -1,0 +1,213 @@
+Exercise 1:
+
+i) and ii)
+
+In this part of the practise we have designed the table functions. We have implemented the table_test.c file the following way: We set random int values to int fields and in strings we have saved "hola mundo" in each one. When we execute the exercise we have in each row one string with "hola mundo" and 3 random integers, so it works as it should. 
+
+iii) 
+
+In this part of the exercise we have implemented more types that can be added to the database, we have implemented the long long int and the double type, so in our new table we can add new data types, this made us chage a bit the types functions, but it was not very difficult.
+
+Output of table_test.c:
+/---****************************************************---\
+
+miguelarman:~/workspace/Practica3 (master) $ ./table_test
+number of columns: 4
+
+Row: 1
+        Value 1 :3      Value 2 :9223372036854775807    Value 3 :Hola mundo.    Value 4 :0.886000
+Row: 2
+        Value 1 :7      Value 2 :9223372036854775807    Value 3 :Hola mundo.    Value 4 :6.915000
+Row: 3
+        Value 1 :3      Value 2 :9223372036854775807    Value 3 :Hola mundo.    Value 4 :8.335000
+Row: 4
+        Value 1 :6      Value 2 :9223372036854775807    Value 3 :Hola mundo.    Value 4 :0.492000
+Row: 5
+        Value 1 :9      Value 2 :9223372036854775807    Value 3 :Hola mundo.    Value 4 :1.421000  
+
+\---****************************************************---/
+
+As we can in each row, the first value is an int, the second one is a long long int (and also notice that that is the biggest number that fits in a long long int), the third value is a string (the one used before) and the last one is as we can see a real number stored in the C type double.
+
+2)
+Salidas de los ejercicios y score_test
+
+In this part, we have implemented the two files we were asked:
+    - score, in which we receive a title and a score, and add it to a local binary table, as well as the isbn and book_id *(see notes at the end)
+    - suggets, in which we receive an score, and search through all the books in the local table and print the title and the author of those which received that score
+
+In order to be able to use this functions, we implemented also initialize_table.c, in which a table is created with table_create. This only prints the header of the table into the file, but is needed to write data in score and read it in suggest
+
+OUTPUTS:
+
+-Score:
+
+    Score doesn't print anything on the screen. It just adds a book to a file (book_table.txt), which has a lot of unprintable characters. In order to see if score worked properly, we used the command
+    > hexdump -C "book_table.txt"
+    which returns the following:
+    
+    $ hexdump -C "book_table.txt" 
+    00000000  04 00 00 00 01 00 00 00  01 00 00 00 00 00 00 00  |................|
+    00000010  00 00 00 00 21 00 00 00  38 34 39 30 36 32 38 33  |....!...84906283|
+    00000020  34 33 00 45 6c 20 43 6c  75 62 20 44 75 6d 61 73  |43.El Club Dumas|
+    00000030  00 5a 00 00 00 00 00 00  00 24 00 00 00 38 34 32  |.Z.......$...842|
+    00000040  30 34 38 33 35 30 38 00  50 61 74 65 6e 74 65 20  |0483508.Patente |
+    00000050  64 65 20 43 6f 72 73 6f  00 5a 00 00 00 00 00 00  |de Corso.Z......|
+    00000060  00 20 00 00 00 39 30 32  38 34 32 36 31 35 39 00  |. ...9028426159.|
+    00000070  53 63 68 61 64 75 77 74  61 6e 67 6f 00 64 00 00  |Schaduwtango.d..|
+    00000080  00 00 00 00 00                                    |.....|
+    00000085
+
+    With this we can check if the string values (isbn and title) are stored correctly. However, int fields cannot be checked with this function, which reads hexadecimal, so we modified table_test into score_test. Here read everything from the file, and print it through the terminal. It returns, with this file:
+    
+    $ ./score_test
+
+        Row: 1
+        	Value 1: 8490628343	Value 2: El Club Dumas	Value 3: 90	Value 4: 0	
+        Row: 2
+        	Value 1: 8420483508	Value 2: Patente de Corso	Value 3: 90	Value 4: 0	
+        Row: 3
+        	Value 1: 9028426159	Value 2: Schaduwtango	Value 3: 100	Value 4: 0	
+
+    As we can see, the field score is stored correctly
+    
+    *(See notes at the end for further explanation about the field book_id)
+
+-Suggest:
+
+    Suggest prints in the screen books with the score given, so with this three books scored, it returns:
+    
+    $ ./suggest 75
+    
+    
+
+    $ ./suggest 90
+
+    Arturo Perez-Reverte	El Club Dumas
+    Arturo Perez-Reverte	Patente de Corso
+    
+    $ ./suggest 100
+    
+    Arturo Pérez-Reverte	Schaduwtango
+    
+    
+    We did not implement another file to check suggest, as it can be easily checked knowing which books have been scored and being able to see all the scores with score_test
+
+
+
+3)
+i) index_test salida y explicar
+
+In order to implement indexes, we chose the implementation in which each record has a different key, and the positions are stored in a array, instead of creating a new record for each time a key appears
+
+We implemented index_test, in which we create an index, fill it with some randomly generated keys and positions (keys are generated between 1 and 4, and the position between 0 and 99), and read all of them to check if everything was been stored properly. In order to compare the keys that are suposedly stored and the ones that are truly stored, we first print the pairs of keys and positions being inserted, and after all the process print all the positions of each key, as well as how many of them there are. So when we execute it, in the terminal we see:
+
+    $ ./index_test 
+    
+    Key: 4	Position: 86
+    Key: 2	Position: 15
+    Key: 2	Position: 35
+    Key: 3	Position: 92
+    Key: 2	Position: 21
+    Key: 3	Position: 27
+    Key: 3	Position: 59
+    Key: 4	Position: 26
+    Key: 1	Position: 26
+    Key: 1	Position: 36
+    Key: 4	Position: 68
+    Key: 4	Position: 29
+    Key: 3	Position: 30
+    Key: 3	Position: 23
+    Key: 4	Position: 35
+    
+    
+    
+    Key: 1 (num_pos: 2)	26	36
+    Key: 2 (num_pos: 3)	15	21	35
+    Key: 3 (num_pos: 5)	23	27	30	59	92
+    Key: 4 (num_pos: 5)	26	29	35	68	86
+
+With this output, we can visualy check if all the keys and positions have been correctly stored.
+
+
+ii) and iii) cambios a score y suggest. salida y explicarlo
+
+
+In this part, we have modified the two files we were asked:
+    - score_index. The difference with score is that we also add the score as key and the position in which we write in the table to an index, in order to use it in suggest_index
+    - suggets_index. The difference with suggest is that, instead of looping through every book in the table, and check if its score is equal to the one given, we just ask the index for all the positions of books with that same score, and just loop through them. Inside the loop we do the same (asking ODBC for the author....)
+
+In order to be able to use this functions, we implemented initialize_index.c (as well as initialize_table.c from the previous files), in which an index is created with index_create. This only prints the header of the index into the file, but is needed to write data in score and read it in suggest
+
+OUTPUTS:
+
+-Score_index:
+
+    Score_index, as score did, doesn't print anything on the screen. It just adds a book to a table (book_table.txt), and the position it has been written, as well as the score to an idex. In order to see if score_test worked properly, we used the same command we used with score:
+    > hexdump -C "book_table.txt"
+    which returns the following:
+    
+    $ hexdump -C "book_table.txt" 
+    00000000  04 00 00 00 01 00 00 00  01 00 00 00 00 00 00 00  |................|
+    00000010  00 00 00 00 21 00 00 00  38 34 39 30 36 32 38 33  |....!...84906283|
+    00000020  34 33 00 45 6c 20 43 6c  75 62 20 44 75 6d 61 73  |43.El Club Dumas|
+    00000030  00 5a 00 00 00 00 00 00  00 24 00 00 00 38 34 32  |.Z.......$...842|
+    00000040  30 34 38 33 35 30 38 00  50 61 74 65 6e 74 65 20  |0483508.Patente |
+    00000050  64 65 20 43 6f 72 73 6f  00 5a 00 00 00 00 00 00  |de Corso.Z......|
+    00000060  00 20 00 00 00 39 30 32  38 34 32 36 31 35 39 00  |. ...9028426159.|
+    00000070  53 63 68 61 64 75 77 74  61 6e 67 6f 00 64 00 00  |Schaduwtango.d..|
+    00000080  00 00 00 00 00                                    |.....|
+    00000085
+    
+    $ hexdump -C "book_index.txt" 
+    00000000  00 00 00 00 02 00 00 00  5a 00 00 00 02 00 00 00  |........Z.......|
+    00000010  14 00 00 00 00 00 00 00  39 00 00 00 00 00 00 00  |........9.......|
+    00000020  64 00 00 00 01 00 00 00  61 00 00 00 00 00 00 00  |d.......a.......|
+    00000030
+
+    
+    With this we can check if the string values (isbn and title) are stored correctly. However, int fields cannot be checked with this function, which reads hexadecimal, so we used the same score_test as previously. It returns, with this file:
+    
+    $ ./score_test
+
+        Row: 1
+        	Value 1: 8490628343	Value 2: El Club Dumas	Value 3: 90	Value 4: 0	
+        Row: 2
+        	Value 1: 8420483508	Value 2: Patente de Corso	Value 3: 90	Value 4: 0	
+        Row: 3
+        	Value 1: 9028426159	Value 2: Schaduwtango	Value 3: 100	Value 4: 0	
+
+    We can see that nothing has changed in the table, although we are now using indexes.
+    
+    *(See notes at the end for further explanation about the field book_id)
+
+-Suggest_index:
+
+    Suggest_index, as suggest did, prints in the screen books with the score given, so with this three books scored, it also returns:
+    
+    $ ./suggest 75
+    
+    
+
+    $ ./suggest 90
+
+    Arturo Perez-Reverte	El Club Dumas
+    Arturo Perez-Reverte	Patente de Corso
+    
+    $ ./suggest 100
+    
+    Arturo Pérez-Reverte	Schaduwtango
+    
+    
+    We can see, with this checks, that although we are using indexes, the data itself is not modified. All the differences this files have in comparison to the previous version, is that they are more efficient when executed, because the just read what is needed, instead of the whole file
+
+
+
+
+
+Finally:
+Write a report explaining your work, the problems that you have found and your solution. Have
+you implemented the indices as mentioned here, or have you found your own solution? Have you
+implemented the table the way I did, or have you found your own way (there are other ways... we’ll
+talk about it in class).
+About implementation of the index and table we have used the implementation given in class. We had a lot of trouble implementing the table functiones because it was the first time we work we binary files and we were not used to them, but after a few hours we managed to domain them and also the functions that work with them. In the odb part we had a lot of trouble implementing the queries, so we used the odbc command sprintf and we passed the arguments without troubles, in the suggest program we alredy have the title stored in our binary file, but however, we take it from the sql database just because we think it is more reliable that taking it from our own file. The implementation of indexes was a bit tricky, because the functions were very difficult and with a too long implementation. We faced a lot of troubles, the most significant ones were the segmentation fault, for that we used the tool Valgrind and for much other troubles we had, we used internet guides to solve them. In the previous practise we did not use the book ID and in this practise we haven't either, because it works as a serial and we alredy have the ISBN, so it is not necesary given our implementation, we have set all the bookid fields as 0 just to reduce mistakes, so we do not use that field for nothing at all.
