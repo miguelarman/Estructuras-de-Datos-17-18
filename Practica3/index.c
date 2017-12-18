@@ -46,7 +46,7 @@ int index_create(int type, char *filename) {
     
     fp = fopen(filename, "w");
     if (fp == NULL) {
-        return;
+        return -1;
     }
     
     fwrite(&type, sizeof(int), 1, fp);
@@ -94,10 +94,7 @@ index_t* index_open(char* path) {
     }
     
     strcpy(pi->path, path);
-    
-    
-    
-    
+  
     
     pf = fopen (path, "r");
     
@@ -153,6 +150,7 @@ index_t* index_open(char* path) {
    NOTE to index_open.
 */
 int index_save(index_t* index) {
+  
   return 0;
 }
 
@@ -163,7 +161,139 @@ int index_save(index_t* index) {
    remember that the index must be kept ordered at all times.
 */
 int index_put(index_t *index, int key, long pos) {
-  return 0;
+    
+    int i = 0, intaux;
+    long longaux;
+    
+    if (index == NULL) {
+        return -1;
+    }
+    
+    while (index->keys[i]->key < key || i < index->n_keys) {
+        i++;
+    }
+    
+    if (i == index->n_keys) {       /*Key is bigger than anyone in the index*/
+        
+        index->n_keys++;
+        
+        index->keys = (irecord **)realloc(index->keys, (index->n_keys) * sizeof(irecord *));
+        if (index->keys == NULL) {
+            return -1;
+        }
+        
+        index->keys[i] = (irecord *)malloc(sizeof(irecord));                              /*Add new record*/
+        if (index->keys[i] == NULL) {
+            return -1;
+        }
+        
+        index->keys[i]->key = key;
+        index->keys[i]->positions = (long *)malloc(1 * sizeof(long));
+        if (index->keys[i]->positions == NULL) {
+            return -1;
+        }
+        
+        index->keys[i]->positions[0] = pos;
+        
+        index->keys[i]->amount = 1;
+        
+        
+        return 0;
+        
+    } else if (i == 0) {       /*Key is smaller than anyone in the index*/
+        
+        index->n_keys++;
+        
+        index->keys = (irecord **)realloc(index->keys, (index->n_keys) * sizeof(irecord *));
+        if (index->keys == NULL) {
+            return -1;
+        }
+        
+        for (int j = index->n_keys - 1; j > 0; j--) {
+            index->keys[j] = index->keys[j - 1];        /*Move every entry one position backwars*/
+        }
+        
+        
+        index->keys[0] = (irecord *)malloc(sizeof(irecord));
+        if (index->keys[0] == NULL) {
+            return -1;
+        }
+        
+        
+        index->keys[0]->key = key;                  /*Add new record*/
+        index->keys[0]->positions = (long *)malloc(1 * sizeof(long));
+        if (index->keys[0]->positions == NULL) {
+            return -1;
+        }
+        
+        index->keys[0]->positions[0] = pos;
+        
+        index->keys[0]->amount = 1;
+        
+        return 0;
+        
+    } else if (index->keys[i]->key == key) {
+        
+        index->keys[i]->amount++;
+        
+        index->keys[i]->positions = (long *)realloc((index->keys[i]->amount) * sizeof(long));
+        if (index->keys[i]->positions == NULL) {
+            return -1;
+        }
+        
+        index->keys[i]->positions[amount - 1] = pos;
+        
+        intaux = amount - 1;
+        
+        while (j > 0 || index->keys[i]->positions[j] < index->keys[i]->positions[j - 1]) {
+            
+            longaux = index->keys[i]->positions[j];
+            index->keys[i]->positions[j] = index->keys[i]->positions[j - 1];
+            index->keys[i]->positions[j - 1] = longaux;
+            
+            j--;
+        }
+        
+        
+        return 0;
+        
+        
+        
+    } else if (index->keys[i]->key > key) {         /*No record with that key but key in between others*/
+        
+        index->n_keys++;
+        
+        index->keys = (irecord **)realloc(index->keys, (index->n_keys) * sizeof(irecord *));
+        if (index->keys == NULL) {
+            return -1;
+        }
+        
+        
+        for (int j = index->n_keys - 1; j > i; j--) {
+            index->keys[j] = index->keys[j - 1];
+        }
+        
+        index->keys[i] = (irecord *)malloc(sizeof(irecord));
+        if (index->keys[i] == NULL) {
+            return -1;
+        }
+        
+        
+        index->keys[i]->key = key;
+        index->keys[i]->positions = (long *)malloc(1 * sizeof(long));
+        if (index->keys[i]->positions == NULL) {
+            return -1;
+        }
+        
+        index->keys[i]->positions[0] = pos;
+        index->keys[i]->amount = 1;
+        
+        
+        return 0;
+    } 
+    
+    
+    return -1;
 }
 
 /* 
@@ -176,7 +306,7 @@ int index_put(index_t *index, int key, long pos) {
    will be something like this:
 
    int n
-   long **poss = index_get(index, key, &n);
+   long *poss = index_get(index, key, &n);
 
    for (int i=0; i<n; i++) {
        Do something with poss[i]
@@ -187,6 +317,30 @@ int index_put(index_t *index, int key, long pos) {
 
 */
 long *index_get(index_t *index, int key, int* nposs) {
+  if (index==NULL){
+      return NULL;
+  }
+  long *poss;
+  int p = 1;
+  int u = index->n_keys;
+  
+    while (u >= p) {
+        medio = (u+p)/2;
+      
+        if (index->keys[medio]->key==key){
+            *nposs = 0;
+            poss = (long *)malloc((index->keys[medio]->amount)*sizeof(long));
+            for (int i=0; i < index->keys[medio]->amount ; i++){
+                poss[i] = index->keys[medio]->positions[i];
+                *nposs++;
+            }
+            return poss;
+        }else if(index->keys[medio]>key){
+            u = medio - 1;
+        }else if (index->keys[medio]<key){
+            p = medio + 1;
+        }
+    }
   
   
   return NULL;
