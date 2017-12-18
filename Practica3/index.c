@@ -37,22 +37,22 @@ int mycmp(const void *kptr, const void *e) {
  */
 int index_create(int type, char *filename) {
     
-    FILE *pf = NULL;
+    FILE *fp = NULL;
     int zero = 0;
     
     if (filename == NULL) {
         return -1;
     }
     
-    fp = fopen(filename, "w");
-    if (fp == NULL) {
+    pf = fopen(filename, "w");
+    if (pf == NULL) {
         return;
     }
     
-    fwrite(&type, sizeof(int), 1, fp);
-    fwrite(&zero, sizeof(int), 1, fp);
+    fwrite(&type, sizeof(int), 1, pf);
+    fwrite(&zero, sizeof(int), 1, pf);
     
-    fclose(fp);
+    fclose(pf);
     
     return 0;
     
