@@ -2,14 +2,20 @@
 CC=gcc
 CFLAGS = -g -Wall -pedantic -ansi -std=c99
 LDLIBS = -lodbc
-FILES = table_test index_test score suggest initialize_table
+FILES = table_test index_test score score_test score_index suggest suggest_index initialize_table initialize_index
 ########################################################
 OBJECTSTABLE_TEST = table.o table_test.o type.o
 OBJECTSINDEX_TEST = index.o index_test.o type.o
+
 OBJECTSSCORE_TEST = table.o score_test.o type.o
 OBJECTSSCORE = odbc.o table.o type.o score.o
 OBJECTSSUGGEST = odbc.o table.o type.o suggest.o
-OBJECTSINITIALIZE = odbc.o table.o type.o initialize_table.o
+
+OBJECTSSCORE_INDEX = odbc.o table.o type.o index.o score_index.o
+OBJECTSSUGGEST_INDEX = odbc.o table.o type.o index.o suggest_index.o
+
+OBJECTSINITIALIZE_TABLE= odbc.o table.o type.o initialize_table.o
+OBJECTSINITIALIZE_INDEX = odbc.o table.o type.o index.o initialize_index.o
 ########################################################
 
 all: $(FILES) clear
@@ -74,11 +80,45 @@ suggest: $(OBJECTSSUGGEST)
 suggest.o: type.h table.h suggest.c
 	$(CC) $(CFLAGS) -c suggest.c
 
-initialize_table: $(OBJECTSINITIALIZE)
-	$(CC) $(CFLAGS) $(OBJECTSINITIALIZE) $(LDLIBS) -o initialize_table
+
+
+
+
+score_index_test: $(OBJECTSSCORE_INDEX_TEST)
+	$(CC) $(CFLAGS) -o score_index_test $(OBJECTSSCORE_INDEX_TEST)
+
+score_index_test.o: type.h table.h index.h score_index_test.c
+	$(CC) $(CFLAGS) -c score_index_test.c
+
+score_index: $(OBJECTSSCORE_INDEX)
+	$(CC) $(CFLAGS) $(OBJECTSSCORE_INDEX) $(LDLIBS) -o score_index
+
+score_index.o: type.h table.h odbc.h index.h score_index.c
+	$(CC) $(CFLAGS) -c score_index.c
+
+suggest_index: $(OBJECTSSUGGEST_INDEX)
+	$(CC) $(CFLAGS) $(OBJECTSSUGGEST_INDEX) $(LDLIBS) -o suggest_index
+
+suggest_index.o: type.h table.h index.h suggest_index.c
+	$(CC) $(CFLAGS) -c suggest_index.c
+
+
+
+
+
+initialize_table: $(OBJECTSINITIALIZE_TABLE)
+	$(CC) $(CFLAGS) $(OBJECTSINITIALIZE_TABLE) $(LDLIBS) -o initialize_table
 
 initialize_table.o: type.h table.h initialize_table.c
 	$(CC) $(CFLAGS) -c initialize_table.c
+
+
+
+initialize_index: $(OBJECTSINITIALIZE_INDEX)
+	$(CC) $(CFLAGS) $(OBJECTSINITIALIZE_INDEX) $(LDLIBS) -o initialize_index
+
+initialize_index.o: type.h table.h index.h initialize_index.c
+	$(CC) $(CFLAGS) -c initialize_index.c
 
 
 
