@@ -100,32 +100,6 @@ int main(int argc, char **argv){
                 printf("\nError fetching data");
             }
             
-            
-            /*ret = SQLCloseCursor(stmt);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError closing cursor for argv[%d]\n", i);
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
-            
-
-	        sprintf(buf, "SELECT author FROM edition WHERE isbn = '%s';", (char*)values[2]);
-            ret = SQLExecDirect(stmt, (SQLCHAR*) buf, SQL_NTS);
-            if (!SQL_SUCCEEDED(ret)) {
-                printf("\nError executing query for inserting into purchases for argv[%d]");
-                odbc_extract_error("SQLDriverConnect", dbc, SQL_HANDLE_DBC);
-                return EXIT_FAILURE;
-            }
-
-
-            if (SQL_SUCCEEDED(ret = SQLFetch(stmt))) {
-    	       ret = SQLGetData(stmt, 1, SQL_C_CHAR, author, sizeof(author), NULL);
-            }*/
-            
-            
-            
-            
-            
             printf("\n%s\t%s", (char *) author, (char*) title);   
                     
             /* free up statement handle */

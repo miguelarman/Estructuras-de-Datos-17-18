@@ -181,6 +181,9 @@ index_t* index_open(char* path) {
     */
 }
 
+
+
+
 /* 
    Saves the current state of index in the file it came from. See the
    NOTE to index_open.

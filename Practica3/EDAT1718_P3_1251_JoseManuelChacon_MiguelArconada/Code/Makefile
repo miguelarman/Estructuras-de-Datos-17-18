@@ -20,36 +20,6 @@ OBJECTSINITIALIZE_INDEX = odbc.o table.o type.o index.o initialize_index.o
 
 all: $(FILES) clear
 
-# compileAll: $(OBJECTSCOMPILEALL)
-# 	$(CC) $(CFLAGS) -o compileAll $(OBJECTSCOMPILEALL)
-
-# compileAll.o: windows.h cube.h plane.h print_speed.h player.h mtype.h stype.h general.h compileAll.c
-# 	$(CC) $(CFLAGS) -c compileAll.c 
-
-# windows_test: $(OBJECTSWINDOWS_TEST)
-# 	$(CC) $(CFLAGS) -o windows_test $(OBJECTSWINDOWS_TEST)
-
-# windows_test.o: windows.h windows_test.c
-# 	$(CC) $(CFLAGS) -c windows_test.c
-
-# game_test: $(OBJECTSGAME_TEST)
-# 	$(CC) $(CFLAGS) -o game_test $(OBJECTSGAME_TEST)
-
-# game_test.o: game.h cube.h plane.h mtype.h stype.h player.h gametime.h readchar.h general.h game_test.c
-# 	$(CC) $(CFLAGS) -c game_test.c
-
-# epyleptic: $(OBJECTSEPI)
-# 	$(CC) $(CFLAGS) -o epyleptic $(OBJECTSEPI)
-
-# epyleptic.o: gametime.h epyleptic.c
-# 	$(CC) $(CFLAGS) -c epyleptic.c
-
-#p3_e1: $(OBJECTSP3_E1)
-#	$(CC) $(CFLAGS) -o p3_e1 $(OBJECTSP3_E1)
-
-#p3_e1.o: functions.h queue.h node.h p3_e1.c
-#	$(CC) $(CFLAGS) -c p3_e1.c
-
 table_test: $(OBJECTSTABLE_TEST)
 	$(CC) $(CFLAGS) -o table_test $(OBJECTSTABLE_TEST)
 
@@ -132,31 +102,6 @@ type.o: type.c type.h
 index.o: type.o index.c index.h
 	$(CC) $(CFLAGS) -c index.c
 
-#odbc.o: odbc.c odbc.h
-#	$(CC) $(CFLAGS) -c odbc.c
-
-
-
-
-# windowstest:
-# 	@echo Ejecutando windows_test
-# 	@./windows_test
-
-# windowstestval:
-# 	@echo Ejecutando windows_test con valgrind
-# 	@valgrind --leak-check=full ./windows_test
-
-# gametest:
-# 	@echo Ejecutando game_test
-# 	@./game_test
-
-# gametestval:
-# 	@echo Ejecutando game_test con valgrind
-# 	@valgrind --leak-check=full ./game_test
-
-
-
-
 
 
 clear:
@@ -164,11 +109,3 @@ clear:
 
 clean:
 	rm -rf *.o $(FILES)
-
-run:
-#	@echo ">>>>>>Running p3_e1"
-#	./p3_e1 "nodos.txt"
-
-runv:
-#	@echo ">>>>>>Running p3_e1 with valgrind"
-#	valgrind --leak-check=full ./p3_e1 "nodos.txt"
